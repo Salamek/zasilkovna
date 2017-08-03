@@ -1,0 +1,26 @@
+{
+  "name": "salamek/zasilkovna",
+  "description": "Zasilkovna SOAP client in PHP",
+  "keywords": [
+    "Zasilkovna",
+    "SOAP",
+    "API"
+  ],
+  "homepage": "https://github.com/Salamek/PplMyApi",
+  "license": ["LGPL-3.0"],
+  "authors": [
+    {
+      "name": "Adam Schubet",
+      "homepage": "https://github.com/Salamek/zasilkovna"
+    }
+  ],
+  "autoload": {
+    "classmap": ["src/"]
+  },
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.8"
+  }
+}
