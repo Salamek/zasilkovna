@@ -15,7 +15,10 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
         $configPath = __DIR__ . '/config.json';
         if (file_exists($configPath)) {
             $config = json_decode(file_get_contents($configPath));
-            $this->zasilkovnaApi = new Api($config->apiPassword);
+            $this->zasilkovnaApi = new Api(
+                $config->apiPassword,
+                $config->apiKey
+            );
         }
         else
         {

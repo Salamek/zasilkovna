@@ -11,17 +11,24 @@ use Salamek\Zasilkovna\Model\PacketAttributes;
  */
 class Api
 {
+    private $jsonEndpoint = 'http://www.zasilkovna.cz/api/v3/%s/branch.json';
+
     /** @var null|\SoapClient */
     private $soap = null;
 
     private $apiPassword;
 
+    private $apiKey;
+
     /** @var string */
     private $wsdl = 'http://www.zasilkovna.cz/api/soap.wsdl';
 
-    public function __construct($apiPassword)
+    public function __construct($apiPassword, $apiKey)
     {
         $this->apiPassword = $apiPassword;
+        $this->apiKey = $apiKey;
+
+        $this->jsonEndpoint = sprintf($this->jsonEndpoint, $this->apiKey);
 
         try {
             $this->soap = new \SoapClient($this->wsdl);
@@ -32,71 +39,88 @@ class Api
 
     public function packetAttributesValid(PacketAttributes $attributes)
     {
-        $this->soap->packetAttributesValid($this->apiPassword, $attributes);
+        return $this->soap->packetAttributesValid($this->apiPassword, $attributes);
     }
 
     public function packetClaimAttributesValid(ClaimAttributes $attributes)
     {
-        $this->soap->packetClaimAttributesValid($this->apiPassword, $attributes);
+        return $this->soap->packetClaimAttributesValid($this->apiPassword, $attributes);
     }
 
     public function createPacket(PacketAttributes $attributes)
     {
-        $this->soap->createPacket($this->apiPassword, $attributes);
+        return $this->soap->createPacket($this->apiPassword, $attributes);
     }
 
     public function createPacketClaim(ClaimAttributes $attributes)
     {
-        $this->soap->createPacketClaim($this->apiPassword, $attributes);
+        return $this->soap->createPacketClaim($this->apiPassword, $attributes);
     }
 
     public function createShipment(/*int*/ $packetId, /*string*/ $customBarcode)
     {
-        $this->soap->createShipment($this->apiPassword, $packetId, $customBarcode);
+        return $this->soap->createShipment($this->apiPassword, $packetId, $customBarcode);
     }
 
     public function packetStatus(/*int*/ $packetId)
     {
-        $this->soap->packetStatus($this->apiPassword, $packetId);
+        return $this->soap->packetStatus($this->apiPassword, $packetId);
     }
 
     public function packetTracking(/*int*/ $packetId)
     {
-        $this->soap->packetTracking($this->apiPassword, $packetId);
+        return $this->soap->packetTracking($this->apiPassword, $packetId);
     }
 
     public function packetGetStoredUntil(/*int*/ $packetId)
     {
-        $this->soap->packetGetStoredUntil($this->apiPassword, $packetId);
+        return $this->soap->packetGetStoredUntil($this->apiPassword, $packetId);
     }
 
     public function packetSetStoredUntil(/*int*/ $packetId, \DateTimeInterface $date)
     {
-        $this->soap->packetSetStoredUntil($this->apiPassword, $packetId, $date);
+        return $this->soap->packetSetStoredUntil($this->apiPassword, $packetId, $date);
     }
 
     public function barcodePng(/*string*/ $barcode)
     {
-        $this->soap->barcodePng($this->apiPassword, $barcode);
+        return $this->soap->barcodePng($this->apiPassword, $barcode);
     }
 
     public function packetLabelPdf(/*int*/ $packetId, /*string*/ $format, /*int*/ $offset)
     {
-        $this->soap->packetLabelPdf($this->apiPassword, $packetId, $format, $offset);
+        return $this->soap->packetLabelPdf($this->apiPassword, $packetId, $format, $offset);
     }
 
     public function packetsLabelsPdf(array/*PacketIds*/ $packetIds, /*string*/ $format, /*int*/ $offset)
     {
-        $this->soap->packetsLabelsPdf($this->apiPassword, $packetIds, $format, $offset);
+        return $this->soap->packetsLabelsPdf($this->apiPassword, $packetIds, $format, $offset);
     }
 
     public function packetCourierNumber(/*int*/ $packetId)
     {
-        $this->soap->packetCourierNumber($this->apiPassword, $packetId);
+        return $this->soap->packetCourierNumber($this->apiPassword, $packetId);
     }
 
     public function senderGetReturnRouting(/*string*/ $senderLabel)
     {
-        $this->soap->senderGetReturnRouting($this->apiPassword, $senderLabel);
+        return $this->soap->senderGetReturnRouting($this->apiPassword, $senderLabel);
+    }
+
+    public function getBranchList()
+    {
+        $result = file_get_contents($this->jsonEndpoint);
+        if (!$result)
+        {
+            throw new \Exception('Failed to open JSON endpoint');
+        }
+
+        $data = json_decode($result);
+        if (!$data)
+        {
+            throw new \Exception('Failed to decode JSON');
+        }
+
+        return $data;
     }
 }

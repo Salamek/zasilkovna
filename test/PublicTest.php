@@ -16,4 +16,14 @@ final class PublicTest extends BaseTest
         //$this->zasilkovnaApi->createPacket();
         $this->assertInternalType('boolean', true);
     }
+
+    /**
+     * @test
+     */
+    public function testGetBranchList()
+    {
+        $array = $this->zasilkovnaApi->getBranchList();
+
+        $this->assertInternalType('boolean', true);
+    }
 }
