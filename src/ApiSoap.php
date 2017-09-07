@@ -1,6 +1,7 @@
 <?php
 
 namespace Salamek\Zasilkovna;
+use Salamek\Zasilkovna\Exception\WrongDataException;
 use Salamek\Zasilkovna\Model\ClaimAttributes;
 use Salamek\Zasilkovna\Model\PacketAttributes;
 
@@ -34,9 +35,21 @@ class ApiSoap extends Api
         }
     }
 
+    /**
+     * @param PacketAttributes $attributes
+     * @return mixed
+     * @throws WrongDataException
+     */
     public function packetAttributesValid(PacketAttributes $attributes)
     {
-        return $this->soap->packetAttributesValid($this->apiPassword, $attributes);
+        try
+        {
+            return $this->soap->packetAttributesValid($this->apiPassword, $attributes);
+        }
+        catch (\SoapFault $e)
+        {
+            throw new WrongDataException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
     }
 
     public function packetClaimAttributesValid(ClaimAttributes $attributes)

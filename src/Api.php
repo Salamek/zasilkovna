@@ -8,11 +8,23 @@
 
 namespace Salamek\Zasilkovna;
 
-
+/**
+ * Class Api
+ * @package Salamek\Zasilkovna
+ */
 abstract class Api
 {
+    /** @var string */
     private $jsonEndpoint = 'http://www.zasilkovna.cz/api/v3/%s/branch.json';
 
+    /** @var string */
+    private $apiKey;
+
+    /**
+     * Api constructor.
+     * @param $apiPassword
+     * @param $apiKey
+     */
     public function __construct($apiPassword, $apiKey)
     {
         $this->apiKey = $apiKey;
@@ -20,6 +32,10 @@ abstract class Api
         $this->jsonEndpoint = sprintf($this->jsonEndpoint, $this->apiKey);
     }
 
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
     public function getBranchList()
     {
         $result = file_get_contents($this->jsonEndpoint);
