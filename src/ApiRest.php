@@ -32,18 +32,31 @@ class ApiRest extends Api
         $this->apiKey = $apiKey;
     }
 
+    /**
+     * @param $root
+     * @param array $array
+     * @return string
+     */
     private function array2xml($root, array $array)
     {
         return ArrayToXml::convert($array, $root);
     }
 
-    private function xml2array($xml)
+    /**
+     * @param $xml
+     * @return mixed
+     */
+    private function xml2object($xml)
     {
         $simplexml = simplexml_load_string($xml, "SimpleXMLElement", LIBXML_NOCDATA);
         $json = json_encode($simplexml);
-        return json_decode($json, true);
+        return json_decode($json, false);
     }
 
+    /**
+     * @param $xml
+     * @return mixed
+     */
     private function post($xml)
     {
         $opts = ['http' =>
@@ -59,6 +72,12 @@ class ApiRest extends Api
         return file_get_contents($this->restApiUrl, false, $context);
     }
 
+    /**
+     * @param $method
+     * @param IModel $object
+     * @return mixed
+     * @throws RestFault
+     */
     private function callApi($method, IModel $object)
     {
         $path = explode('\\', get_class($object));
@@ -70,38 +89,62 @@ class ApiRest extends Api
             $dataName => $data
         ];
 
-
         $xml = $this->array2xml($method, $xmlArray);
 
         $resultXml = $this->post($xml);
 
-        $result = $this->xml2array($resultXml);
+        $result = $this->xml2object($resultXml);
         $this->proccessResult($result);
+
+        return (isset($result->result) ? $result->result : null);
     }
 
-    private function proccessResult(array $result)
+    /**
+     * @param array $result
+     * @throws RestFault
+     */
+    private function proccessResult($result)
     {
-        if ($result['status'] == 'fault')
+        if ($result->status == 'fault')
         {
-            throw new RestFault($result['fault'].': '.$result['string'].json_encode($result['detail']));
+            throw new RestFault($result->fault.': '.$result->string.json_encode($result->detail));
         }
     }
 
+    /**
+     * @param PacketAttributes $attributes
+     * @return mixed
+     */
     public function packetAttributesValid(PacketAttributes $attributes)
     {
         return $this->callApi(__FUNCTION__, $attributes);
     }
 
+    /**
+     * @param ClaimAttributes $attributes
+     * @return mixed
+     */
     public function packetClaimAttributesValid(ClaimAttributes $attributes)
     {
+        return $this->callApi(__FUNCTION__, $attributes);
     }
 
+    /**
+     * @param PacketAttributes $attributes
+     * @return mixed
+     */
     public function createPacket(PacketAttributes $attributes)
     {
+        return $this->callApi(__FUNCTION__, $attributes);
     }
 
+    /**
+     * @param ClaimAttributes $attributes
+     * @return mixed
+     */
     public function createPacketClaim(ClaimAttributes $attributes)
     {
+        return $this->callApi(__FUNCTION__, $attributes);
     }
 
     public function createShipment(/*int*/ $packetId, /*string*/ $customBarcode)
