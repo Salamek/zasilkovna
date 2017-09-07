@@ -1,6 +1,6 @@
 <?php
 
-namespace Salamek\Zasilkovna\Model;
+namespace Salamek\Zasilkovna\Enum;
 
 /**
  * Created by PhpStorm.
