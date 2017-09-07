@@ -9,10 +9,8 @@ use Salamek\Zasilkovna\Model\PacketAttributes;
  * Date: 3.8.17
  * Time: 0:27
  */
-class Api
+class ApiSoap extends Api
 {
-    private $jsonEndpoint = 'http://www.zasilkovna.cz/api/v3/%s/branch.json';
-
     /** @var null|\SoapClient */
     private $soap = null;
 
@@ -27,8 +25,6 @@ class Api
     {
         $this->apiPassword = $apiPassword;
         $this->apiKey = $apiKey;
-
-        $this->jsonEndpoint = sprintf($this->jsonEndpoint, $this->apiKey);
 
         try {
             $this->soap = new \SoapClient($this->wsdl);
@@ -105,22 +101,5 @@ class Api
     public function senderGetReturnRouting(/*string*/ $senderLabel)
     {
         return $this->soap->senderGetReturnRouting($this->apiPassword, $senderLabel);
-    }
-
-    public function getBranchList()
-    {
-        $result = file_get_contents($this->jsonEndpoint);
-        if (!$result)
-        {
-            throw new \Exception('Failed to open JSON endpoint');
-        }
-
-        $data = json_decode($result);
-        if (!$data)
-        {
-            throw new \Exception('Failed to decode JSON');
-        }
-
-        return $data;
     }
 }

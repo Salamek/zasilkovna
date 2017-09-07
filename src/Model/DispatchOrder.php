@@ -15,10 +15,10 @@ namespace Salamek\Zasilkovna\Model;
 class DispatchOrder
 {
     /** @var string */
-    private $goods;
+    protected $goods;
 
     /** @var string */
-    private $pdf;
+    protected $pdf;
 
     /**
      * DispatchOrder constructor.

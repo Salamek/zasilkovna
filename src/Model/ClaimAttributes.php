@@ -10,28 +10,28 @@ namespace Salamek\Zasilkovna\Model;
 class ClaimAttributes
 {
     /** @var int|null */
-    private $id;
+    protected $id;
 
     /** @var string */
-    private $number;
+    protected $number;
 
     /** @var string|null */
-    private $email;
+    protected $email;
 
     /** @var string */
-    private $phone;
+    protected $phone;
 
     /** @var float */
-    private $value;
+    protected $value;
 
     /** @var string */
-    private $currency;
+    protected $currency;
 
     /** @var string|null */
-    private $eshop;
+    protected $eshop;
 
     /** @var boolean|null */
-    private $sendLabelToEmail;
+    protected $sendLabelToEmail;
 
     /**
      * PacketAttributes constructor.

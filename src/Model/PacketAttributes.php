@@ -10,70 +10,70 @@ namespace Salamek\Zasilkovna\Model;
 class PacketAttributes
 {
     /** @var int */
-    private $id;
+    protected $id;
 
     /** @var string */
-    private $number;
+    protected $number;
 
     /** @var string */
-    private $name;
+    protected $name;
 
     /** @var string */
-    private $surname;
+    protected $surname;
 
     /** @var string */
-    private $company;
+    protected $company;
 
     /** @var string */
-    private $email;
+    protected $email;
 
     /** @var string */
-    private $phone;
+    protected $phone;
 
     /** @var int */
-    private $addressId;
+    protected $addressId;
 
     /** @var string */
-    private $currency;
+    protected $currency;
 
     /** @var float */
-    private $cod;
+    protected $cod;
 
     /** @var float */
-    private $value;
+    protected $value;
 
     /** @var float */
-    private $weight;
+    protected $weight;
 
     /** @var string */
-    private $eshop;
+    protected $eshop;
 
     /** @var boolean */
-    private $adultContent;
+    protected $adultContent;
 
     /** @var string */
-    private $street;
+    protected $street;
 
     /** @var string */
-    private $houseNumber;
+    protected $houseNumber;
 
     /** @var string */
-    private $city;
+    protected $city;
 
     /** @var string */
-    private $zip;
+    protected $zip;
 
     /** @var int */
-    private $carrierPickupPoint;
+    protected $carrierPickupPoint;
 
     /** @var string */
-    private $carrierService;
+    protected $carrierService;
 
     /** @var DispatchOrder|null */
-    private $dispatchOrder;
+    protected $dispatchOrder;
 
     /** @var string */
-    private $customerBarcode;
+    protected $customerBarcode;
 
 
     /**
