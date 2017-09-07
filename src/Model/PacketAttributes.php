@@ -7,73 +7,73 @@ namespace Salamek\Zasilkovna\Model;
  * Date: 3.8.17
  * Time: 1:01
  */
-class PacketAttributes
+class PacketAttributes implements IModel
 {
     /** @var int */
-    protected $id;
+    private $id;
 
     /** @var string */
-    protected $number;
+    private $number;
 
     /** @var string */
-    protected $name;
+    private $name;
 
     /** @var string */
-    protected $surname;
+    private $surname;
 
     /** @var string */
-    protected $company;
+    private $company;
 
     /** @var string */
-    protected $email;
+    private $email;
 
     /** @var string */
-    protected $phone;
+    private $phone;
 
     /** @var int */
-    protected $addressId;
+    private $addressId;
 
     /** @var string */
-    protected $currency;
+    private $currency;
 
     /** @var float */
-    protected $cod;
+    private $cod;
 
     /** @var float */
-    protected $value;
+    private $value;
 
     /** @var float */
-    protected $weight;
+    private $weight;
 
     /** @var string */
-    protected $eshop;
+    private $eshop;
 
     /** @var boolean */
-    protected $adultContent;
+    private $adultContent;
 
     /** @var string */
-    protected $street;
+    private $street;
 
     /** @var string */
-    protected $houseNumber;
+    private $houseNumber;
 
     /** @var string */
-    protected $city;
+    private $city;
 
     /** @var string */
-    protected $zip;
+    private $zip;
 
     /** @var int */
-    protected $carrierPickupPoint;
+    private $carrierPickupPoint;
 
     /** @var string */
-    protected $carrierService;
+    private $carrierService;
 
     /** @var DispatchOrder|null */
-    protected $dispatchOrder;
+    private $dispatchOrder;
 
     /** @var string */
-    protected $customerBarcode;
+    private $customerBarcode;
 
 
     /**
@@ -487,4 +487,11 @@ class PacketAttributes
         return $this->customerBarcode;
     }
 
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
+    }
 }

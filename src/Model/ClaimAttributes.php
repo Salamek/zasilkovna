@@ -7,31 +7,31 @@ namespace Salamek\Zasilkovna\Model;
  * Date: 3.8.17
  * Time: 1:00
  */
-class ClaimAttributes
+class ClaimAttributes implements IModel
 {
     /** @var int|null */
-    protected $id;
+    private $id;
 
     /** @var string */
-    protected $number;
+    private $number;
 
     /** @var string|null */
-    protected $email;
+    private $email;
 
     /** @var string */
-    protected $phone;
+    private $phone;
 
     /** @var float */
-    protected $value;
+    private $value;
 
     /** @var string */
-    protected $currency;
+    private $currency;
 
     /** @var string|null */
-    protected $eshop;
+    private $eshop;
 
     /** @var boolean|null */
-    protected $sendLabelToEmail;
+    private $sendLabelToEmail;
 
     /**
      * PacketAttributes constructor.
@@ -181,5 +181,13 @@ class ClaimAttributes
     public function isSendLabelToEmail()
     {
         return $this->sendLabelToEmail;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 }

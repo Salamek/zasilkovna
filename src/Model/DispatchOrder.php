@@ -12,13 +12,13 @@ namespace Salamek\Zasilkovna\Model;
  * Class DispatchOrder
  * @package Salamek\Zasilkovna\Model
  */
-class DispatchOrder
+class DispatchOrder implements IModel
 {
     /** @var string */
-    protected $goods;
+    private $goods;
 
     /** @var string */
-    protected $pdf;
+    private $pdf;
 
     /**
      * DispatchOrder constructor.
@@ -61,5 +61,13 @@ class DispatchOrder
     public function getPdf()
     {
         return $this->pdf;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 }

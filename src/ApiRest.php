@@ -2,6 +2,7 @@
 
 namespace Salamek\Zasilkovna;
 use Salamek\Zasilkovna\Model\ClaimAttributes;
+use Salamek\Zasilkovna\Model\IModel;
 use Salamek\Zasilkovna\Model\PacketAttributes;
 
 /**
@@ -27,7 +28,7 @@ class ApiRest extends Api
     private function array2xml($root, array $array)
     {
         $xml = new \SimpleXMLElement('<'.$root.'/>');
-        array_walk_recursive($test_array, [$xml, 'addChild']);
+        array_walk_recursive($array, [$xml, 'addChild']);
         return $xml->asXML();
     }
 
@@ -53,17 +54,23 @@ class ApiRest extends Api
         return file_get_contents($this->restApiUrl, false, $context);
     }
 
-    private function callApi($method, $object)
+    private function callApi($method, IModel $object)
     {
         $dataName = get_class($object);
-        $data = get_object_vars($object);
+        $data = $object->toArray();
 
         $xmlArray = [
             'apiPassword' => $this->apiPassword,
             $dataName => $data
         ];
 
+        dump($xmlArray);
+
         $xml = $this->array2xml($method, $xmlArray);
+
+        echo '<pre>';
+        echo(htmlspecialchars($xml));
+        echo '</pre>';
 
         return $this->post($xml);
     }
@@ -85,7 +92,10 @@ class ApiRest extends Api
           </packetAttributes>
         </createPacket>';*/
 
+        echo '<pre>';
         echo(htmlspecialchars($result));
+        echo '</pre>';
+
         $attributesArray = [
             //'id' => NULL,
             'number' => 44427,
