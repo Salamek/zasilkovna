@@ -18,9 +18,14 @@ class ApiRest extends Api
 
     private $apiKey;
 
-
+    /**
+     * ApiRest constructor.
+     * @param $apiPassword
+     * @param $apiKey
+     */
     public function __construct($apiPassword, $apiKey)
     {
+        parent::__construct($apiPassword, $apiKey);
         $this->apiPassword = $apiPassword;
         $this->apiKey = $apiKey;
     }
@@ -28,7 +33,9 @@ class ApiRest extends Api
     private function array2xml($root, array $array)
     {
         $xml = new \SimpleXMLElement('<'.$root.'/>');
-        array_walk_recursive($array, [$xml, 'addChild']);
+        array_walk_recursive($array, function(&$item, $key) use ($xml){
+            $xml->addChild($key, $item);
+        });
         return $xml->asXML();
     }
 
@@ -56,7 +63,8 @@ class ApiRest extends Api
 
     private function callApi($method, IModel $object)
     {
-        $dataName = get_class($object);
+        $path = explode('\\', get_class($object));
+        $dataName =  array_pop($path);
         $data = $object->toArray();
 
         $xmlArray = [

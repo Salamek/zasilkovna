@@ -23,6 +23,7 @@ class ApiSoap extends Api
 
     public function __construct($apiPassword, $apiKey)
     {
+        parent::__construct($apiPassword, $apiKey);
         $this->apiPassword = $apiPassword;
         $this->apiKey = $apiKey;
 
