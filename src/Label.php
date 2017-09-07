@@ -20,7 +20,7 @@ class Label
      * @return string
      * @throws \Exception
      */
-    public static function generateLabels(array $packetAttributes, $decomposition = LabelDecomposition::FULL)
+    public static function generateLabels(IApi $api, array $packetAttributes, $decomposition = LabelDecomposition::FULL)
     {
         if (!in_array($decomposition, LabelDecomposition::$list)) {
             throw new WrongDataException(sprintf('unknown $decomposition only %s are allowed', implode(', ', LabelDecomposition::$list)));
@@ -51,7 +51,7 @@ class Label
             switch ($decomposition) {
                 case LabelDecomposition::FULL:
                     $pdf->AddPage();
-                    $pdf = self::generateLabelFull($pdf, $packetAttribute);
+                    $pdf = self::generateLabelFull($api, $pdf, $packetAttribute);
                     break;
 
                 case LabelDecomposition::QUARTER:
@@ -63,7 +63,7 @@ class Label
                         $pdf->AddPage();
                     }
 
-                    $pdf = self::generateLabelQuarter($pdf, $packetAttribute, $quarterPosition);
+                    $pdf = self::generateLabelQuarter($api, $pdf, $packetAttribute, $quarterPosition);
                     $quarterPosition++;
                     break;
             }
@@ -77,10 +77,14 @@ class Label
      * @param PacketAttributes $packetAttributes
      * @return \TCPDF
      */
-    public static function generateLabelFull(\TCPDF $pdf, PacketAttributes $packetAttributes)
+    public static function generateLabelFull(IApi $api, \TCPDF $pdf, PacketAttributes $packetAttributes)
     {
+        dump($api->senderGetReturnRouting($packetAttributes->getEshop()));
+        exit();
+
+        
         $x = 17;
-        $pdf->Image(__DIR__ . '/../assets/logo.png', $x, 10, 66, '', 'PNG');
+        $pdf->Image(__DIR__ . '/../assets/logo.png', $x, 120, 100, '', 'PNG');
 
         //Contact info
         $contactInfoY = 45;
@@ -91,70 +95,72 @@ class Label
 
 
         //Barcode
-        $pdf->StartTransform();
-        $x = 78; //65
-        $y = 85; //110
-        $pdf->Rotate(270, $x, $y);
-        $pdf->write1DBarcode($packetAttributes->getId(), 'I25+', $x, $y, 80, 60, 0.3, ['stretch' => true]);
+        $x = 140; //65
+        $y = 10; //110
 
-        // Stop Transformation
-        $pdf->StopTransform();
+        $pdf->write1DBarcode('Z'.$packetAttributes->getId(), 'C128', $x, $y, 140, 60, 0.3, ['stretch' => true]);
 
         //Barcode number
-        $pdf->StartTransform();
 
         $x = 90;
         $y = 84;
-        $pdf->Rotate(270, $x, $y);
         $pdf->SetFont($pdf->getFontFamily(), '', 23);
         $pdf->Text($x, $y, $packetAttributes->getId());
-        // Stop Transformation
-        $pdf->StopTransform();
 
-        //Prijemce
-        $pdf->SetFont($pdf->getFontFamily(), '', 25);
+                // Stop Transformation
 
-        $pdf->Text(110, 9, 'Příjemce:');
+                //Barcode number
+        /*
+                $x = 90;
+                $y = 84;
+                $pdf->SetFont($pdf->getFontFamily(), '', 23);
+                $pdf->Text($x, $y, $packetAttributes->getId());
+                // Stop Transformation
 
-        $x = 120;
-        $y = 25;
+                //Prijemce
+                $pdf->SetFont($pdf->getFontFamily(), '', 25);
 
-        $pdf->Text($x, $y, $packetAttributes->getCompany());
+                $pdf->Text(110, 9, 'Příjemce:');
 
-        $pdf->Text($x, $y + 10, $packetAttributes->getEmail());
-        $pdf->Text($x, $y + 20, $packetAttributes->getStreet());
-        $pdf->Text($x, $y + 30, $packetAttributes->getCity());
+                $x = 120;
+                $y = 25;
 
-        $pdf->SetFont($pdf->getFontFamily(), 'B', 55);
-        $pdf->Text($x, $y + 40, $packetAttributes->getZip());
+                $pdf->Text($x, $y, $packetAttributes->getCompany());
 
-        $pdf->SetFont($pdf->getFontFamily(), '', 25);
-        $pdf->Text($x, $y + 63, sprintf('Tel.: %s', $packetAttributes->getPhone()));
+                $pdf->Text($x, $y + 10, $packetAttributes->getEmail());
+                $pdf->Text($x, $y + 20, $packetAttributes->getStreet());
+                $pdf->Text($x, $y + 30, $packetAttributes->getCity());
 
-        $pdf->MultiCell(173, 80, '', ['LTRB' => ['width' => 1]], 'L', 0, 0, 112, 21, true, 0, false, true, 0);
-        $pdf->SetFont($pdf->getFontFamily(), 'B', 60);
-        $pdf->SetTextColor(255, 255, 255);
-        $pdf->SetFillColor(0, 0, 0);
+                $pdf->SetFont($pdf->getFontFamily(), 'B', 55);
+                $pdf->Text($x, $y + 40, $packetAttributes->getZip());
 
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFillColor(255, 255, 255);
+                $pdf->SetFont($pdf->getFontFamily(), '', 25);
+                $pdf->Text($x, $y + 63, sprintf('Tel.: %s', $packetAttributes->getPhone()));
 
-        //Sender
-        $pdf->SetFont($pdf->getFontFamily(), '', 25);
-        $pdf->Text(112, 105, 'Odesílatel:');
+                $pdf->MultiCell(173, 80, '', ['LTRB' => ['width' => 1]], 'L', 0, 0, 112, 21, true, 0, false, true, 0);
+                $pdf->SetFont($pdf->getFontFamily(), 'B', 60);
+                $pdf->SetTextColor(255, 255, 255);
+                $pdf->SetFillColor(0, 0, 0);
 
-        $x = 120;
-        $y = 120;
-        $pdf->Text($x, $y, $packetAttributes->getName());
+                $pdf->SetTextColor(0, 0, 0);
+                $pdf->SetFillColor(255, 255, 255);
 
-        $pdf->Text($x, $y + 10, $packetAttributes->getSurname());
+                //Sender
+                $pdf->SetFont($pdf->getFontFamily(), '', 25);
+                $pdf->Text(112, 105, 'Odesílatel:');
 
-        $pdf->Text($x, $y + 20, $packetAttributes->getStreet());
+                $x = 120;
+                $y = 120;
+                $pdf->Text($x, $y, $packetAttributes->getName());
 
-        $pdf->Text($x, $y + 30, sprintf('%s %s', $packetAttributes->getZip(), $packetAttributes->getCity()));
+                $pdf->Text($x, $y + 10, $packetAttributes->getSurname());
 
-        $pdf->MultiCell(173, 48, '', ['LTRB' => ['width' => 1]], 'L', 0, 0, 112, 117, true, 0, false, true, 0);
+                $pdf->Text($x, $y + 20, $packetAttributes->getStreet());
 
+                $pdf->Text($x, $y + 30, sprintf('%s %s', $packetAttributes->getZip(), $packetAttributes->getCity()));
+
+                $pdf->MultiCell(173, 48, '', ['LTRB' => ['width' => 1]], 'L', 0, 0, 112, 117, true, 0, false, true, 0);
+        */
         return $pdf;
     }
 
@@ -165,7 +171,7 @@ class Label
      * @return \TCPDF
      * @throws \Exception
      */
-    public static function generateLabelQuarter(\TCPDF $pdf, PacketAttributes $packetAttributes, $position = LabelPosition::TOP_LEFT)
+    public static function generateLabelQuarter($api, \TCPDF $pdf, PacketAttributes $packetAttributes, $position = LabelPosition::TOP_LEFT)
     {
         if (!in_array($position, [1, 2, 3, 4])) {
             throw new \Exception('Unknow position');

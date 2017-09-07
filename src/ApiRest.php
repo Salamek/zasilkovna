@@ -12,7 +12,7 @@ use Spatie\ArrayToXml\ArrayToXml;
  * Date: 3.8.17
  * Time: 0:27
  */
-class ApiRest extends Api
+class ApiRest extends Api implements IApi
 {
     private $restApiUrl = 'https://www.zasilkovna.cz/api/rest';
 
