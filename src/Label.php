@@ -79,7 +79,18 @@ class Label
      */
     public static function generateLabelFull(IApi $api, \TCPDF $pdf, PacketAttributes $packetAttributes)
     {
-        dump($api->senderGetReturnRouting($packetAttributes->getEshop()));
+        $api->senderGetReturnRouting($packetAttributes->getEshop());
+        dump($api->packetStatus($packetAttributes->getId()));
+
+        //$packetAttributes->getEshop()
+        //$packetAttributes->getNumber();
+
+        /*stdClass #ca63
+        routingSegment => array (2)
+        0 => "=A--0--085=depo=" (16)
+        1 => "+10N+>" (6)*/
+
+
         exit();
 
         

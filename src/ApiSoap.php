@@ -10,7 +10,7 @@ use Salamek\Zasilkovna\Model\PacketAttributes;
  * Date: 3.8.17
  * Time: 0:27
  */
-class ApiSoap extends Api implements IApi
+class ApiSoap implements IApi
 {
     /** @var null|\SoapClient */
     private $soap = null;
@@ -24,7 +24,6 @@ class ApiSoap extends Api implements IApi
 
     public function __construct($apiPassword, $apiKey)
     {
-        parent::__construct($apiPassword, $apiKey);
         $this->apiPassword = $apiPassword;
         $this->apiKey = $apiKey;
 

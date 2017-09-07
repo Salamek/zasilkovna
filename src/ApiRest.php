@@ -12,7 +12,7 @@ use Spatie\ArrayToXml\ArrayToXml;
  * Date: 3.8.17
  * Time: 0:27
  */
-class ApiRest extends Api implements IApi
+class ApiRest implements IApi
 {
     private $restApiUrl = 'https://www.zasilkovna.cz/api/rest';
 
@@ -27,7 +27,6 @@ class ApiRest extends Api implements IApi
      */
     public function __construct($apiPassword, $apiKey)
     {
-        parent::__construct($apiPassword, $apiKey);
         $this->apiPassword = $apiPassword;
         $this->apiKey = $apiKey;
     }
@@ -74,20 +73,28 @@ class ApiRest extends Api implements IApi
 
     /**
      * @param $method
-     * @param IModel $object
+     * @param IModel|array $object
      * @return mixed
      * @throws RestFault
      */
-    private function callApi($method, IModel $object)
+    private function callApi($method, $object)
     {
-        $path = explode('\\', get_class($object));
-        $dataName =  lcfirst(array_pop($path));
-        $data = $object->toArray();
-
         $xmlArray = [
-            'apiPassword' => $this->apiPassword,
-            $dataName => $data
+            'apiPassword' => $this->apiPassword
         ];
+
+        if ($object instanceof IModel)
+        {
+            $path = explode('\\', get_class($object));
+            $dataName =  lcfirst(array_pop($path));
+            $data = $object->toArray();
+
+            $xmlArray[$dataName] = $data;
+        }
+        elseif (is_array($object))
+        {
+            $xmlArray +=  $object;
+        }
 
         $xml = $this->array2xml($method, $xmlArray);
 
@@ -147,43 +154,99 @@ class ApiRest extends Api implements IApi
         return $this->callApi(__FUNCTION__, $attributes);
     }
 
+    /**
+     * @param $packetId
+     * @param $customBarcode
+     * @return mixed
+     */
     public function createShipment(/*int*/ $packetId, /*string*/ $customBarcode)
     {
+        return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'customBarcode' => $customBarcode]);
     }
 
+    /**
+     * @param $packetId
+     * @return mixed
+     */
     public function packetStatus(/*int*/ $packetId)
     {
+        return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
+    /**
+     * @param $packetId
+     * @return mixed
+     */
     public function packetTracking(/*int*/ $packetId)
     {
+        return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
+    /**
+     * @param $packetId
+     * @return mixed
+     */
     public function packetGetStoredUntil(/*int*/ $packetId)
     {
+        return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
+    /**
+     * @param $packetId
+     * @param \DateTimeInterface $date
+     * @return mixed
+     */
     public function packetSetStoredUntil(/*int*/ $packetId, \DateTimeInterface $date)
     {
+        return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'date' => $date->format('Y-m-d H:i:s')]);
     }
 
+    /**
+     * @param $barcode
+     * @return mixed
+     */
     public function barcodePng(/*string*/ $barcode)
     {
+        return $this->callApi(__FUNCTION__, ['barcode' => $barcode]);
     }
 
+    /**
+     * @param $packetId
+     * @param $format
+     * @param $offset
+     * @return mixed
+     */
     public function packetLabelPdf(/*int*/ $packetId, /*string*/ $format, /*int*/ $offset)
     {
+        return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'format' => $format, 'offset' => $offset]);
     }
 
+    /**
+     * @param array $packetIds
+     * @param $format
+     * @param $offset
+     * @return mixed
+     */
     public function packetsLabelsPdf(array/*PacketIds*/ $packetIds, /*string*/ $format, /*int*/ $offset)
     {
+        return $this->callApi(__FUNCTION__, ['packetIds' => $packetIds, 'format' => $format, 'offset' => $offset]);
     }
 
+    /**
+     * @param $packetId
+     * @return mixed
+     */
     public function packetCourierNumber(/*int*/ $packetId)
     {
+        return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
+    /**
+     * @param $senderLabel
+     * @return mixed
+     */
     public function senderGetReturnRouting(/*string*/ $senderLabel)
     {
+        return $this->callApi(__FUNCTION__, ['senderLabel' => $senderLabel]);
     }
 }

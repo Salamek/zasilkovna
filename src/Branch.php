@@ -2,17 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: sadam
- * Date: 7.9.17
- * Time: 1:51
+ * Date: 8.9.17
+ * Time: 1:08
  */
 
 namespace Salamek\Zasilkovna;
 
-/**
- * Class Api
- * @package Salamek\Zasilkovna
- */
-abstract class Api
+
+class Branch
 {
     /** @var string */
     private $jsonEndpoint = 'http://www.zasilkovna.cz/api/v3/%s/branch.json';
