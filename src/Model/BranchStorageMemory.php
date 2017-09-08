@@ -34,7 +34,7 @@ class BranchStorageMemory implements IBranchStorage
     {
         foreach($this->branchList AS $item)
         {
-            if ($item->id == $id)
+            if ($item['id'] == $id)
             {
                 return $item;
                 break;

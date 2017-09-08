@@ -51,12 +51,12 @@ class Branch
             }
 
             $data = json_decode($result, true);
-            if (!$data)
+            if (!$data || !array_key_exists('data', $data))
             {
                 throw new \Exception('Failed to decode JSON');
             }
-
-            $this->branchStorage->setBranchList($data);
+            
+            $this->branchStorage->setBranchList($data['data']);
         }
     }
 

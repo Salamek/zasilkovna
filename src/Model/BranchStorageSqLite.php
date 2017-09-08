@@ -15,6 +15,8 @@ namespace Salamek\Zasilkovna\Model;
 class BranchStorageSqLite implements IBranchStorage
 {
     private $database;
+
+    private $expiry;
     
     private $tableName = 'branch';
 
@@ -22,16 +24,23 @@ class BranchStorageSqLite implements IBranchStorage
      * BranchStorageSqLite constructor.
      * @param null $databasePath
      */
-    public function __construct($databasePath = null)
+    public function __construct($databasePath = null, $expiry = '-24 hours')
     {
+        $this->expiry = $expiry;
         if (is_null($databasePath))
         {
             $databasePath = sys_get_temp_dir().'/'.md5(__CLASS__).'.sqlite';
         }
 
         $this->database = new \PDO('sqlite:/'.$databasePath);
+        $this->database->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         //Create table
+        $this->createTable();
+    }
+
+    private function createTable()
+    {
         $query = 'CREATE TABLE IF NOT EXISTS '.$this->tableName.' (`id` INTEGER, `data` TEXT, `created` DATETIME)';
         $statement = $this->database->prepare($query);
         $statement->execute();
@@ -74,16 +83,18 @@ class BranchStorageSqLite implements IBranchStorage
      */
     public function setBranchList($branchList)
     {
-        // Truncate table
-        $query = 'TRUNCATE TABLE '.$this->tableName;
+        // "Truncate" table
+        $query = 'DROP TABLE '.$this->tableName;
         $statement = $this->database->prepare($query);
         $statement->execute([]);
 
-        $query = 'INSERT INTO '.$this->tableName.' (`id`, `data`) VALUES (?, ?)';
+        $this->createTable();
+
+        $query = 'INSERT INTO '.$this->tableName.' (`id`, `data`, `created`) VALUES (?, ?, ?)';
         $statement = $this->database->prepare($query);
         foreach($branchList AS $item)
         {
-            $statement->execute([$item['id'], json_encode($item)]);
+            $statement->execute([$item['id'], json_encode($item), date('Y-m-d H:i:s')]);
         }
     }
 
@@ -98,7 +109,7 @@ class BranchStorageSqLite implements IBranchStorage
         $found = $statement->fetch();
 
         $limit = new \DateTime();
-        $limit->modify('-24 hours');
+        $limit->modify($this->expiry);
 
         if ($found && (new \DateTime($found['created'])) > $limit)
         {

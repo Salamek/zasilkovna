@@ -8,13 +8,19 @@
 
 namespace Salamek\Zasilkovna\Model;
 
-
+/**
+ * Class BranchStorageFile
+ * @package Salamek\Zasilkovna\Model
+ */
 class BranchStorageFile implements IBranchStorage
 {
+    /** @var array */
     private $branchList;
 
+    /** @var string */
     private $filePath;
 
+    /** @var bool */
     private $storageValid = false;
 
     public function __construct($filePath = null)
@@ -28,7 +34,7 @@ class BranchStorageFile implements IBranchStorage
 
         if (file_exists($this->filePath))
         {
-            $this->branchList = json_decode($this->filePath, true);
+            $this->branchList = json_decode(file_get_contents($this->filePath), true);
             if (!empty($this->branchList))
             {
                 $this->storageValid = true;
