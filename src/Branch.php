@@ -9,24 +9,55 @@
 namespace Salamek\Zasilkovna;
 
 
+use Salamek\Zasilkovna\Model\IBranchStorage;
+
 class Branch
 {
     /** @var string */
-    private $jsonEndpoint = 'http://www.zasilkovna.cz/api/v3/%s/branch.json';
+    private $jsonEndpoint = 'https://www.zasilkovna.cz/api/v3/%s/branch.json';
 
     /** @var string */
     private $apiKey;
 
+    /** @var IBranchStorage */
+    private $branchStorage;
+
     /**
-     * Api constructor.
-     * @param $apiPassword
+     * Branch constructor.
      * @param $apiKey
+     * @param IBranchStorage $branchStorage
      */
-    public function __construct($apiPassword, $apiKey)
+    public function __construct($apiKey, IBranchStorage $branchStorage)
     {
         $this->apiKey = $apiKey;
+        $this->branchStorage = $branchStorage;
 
         $this->jsonEndpoint = sprintf($this->jsonEndpoint, $this->apiKey);
+
+        $this->initializeStorage();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function initializeStorage()
+    {
+        if (!$this->branchStorage->isStorageValid())
+        {
+            $result = file_get_contents($this->jsonEndpoint);
+            if (!$result)
+            {
+                throw new \Exception('Failed to open JSON endpoint');
+            }
+
+            $data = json_decode($result, true);
+            if (!$data)
+            {
+                throw new \Exception('Failed to decode JSON');
+            }
+
+            $this->branchStorage->setBranchList($data);
+        }
     }
 
     /**
@@ -35,18 +66,15 @@ class Branch
      */
     public function getBranchList()
     {
-        $result = file_get_contents($this->jsonEndpoint);
-        if (!$result)
-        {
-            throw new \Exception('Failed to open JSON endpoint');
-        }
+        return $this->branchStorage->getBranchList();
+    }
 
-        $data = json_decode($result);
-        if (!$data)
-        {
-            throw new \Exception('Failed to decode JSON');
-        }
-
-        return $data;
+    /**
+     * @param $id
+     * @return object
+     */
+    public function find($id)
+    {
+        return $this->branchStorage->find($id);
     }
 }

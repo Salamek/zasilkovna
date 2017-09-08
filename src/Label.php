@@ -14,13 +14,30 @@ use Salamek\Zasilkovna\Model\PacketAttributes;
 
 class Label
 {
+    /** @var IApi */
+    private $api;
+
+    /** @var Branch */
+    private $branch;
+
+    /**
+     * Label constructor.
+     * @param IApi $api
+     * @param Branch $branch
+     */
+    public function __construct(IApi $api, Branch $branch)
+    {
+        $this->api = $api;
+        $this->branch = $branch;
+    }
+
     /**
      * @param PacketAttributes[] $packetAttributes
      * @param int $decomposition
      * @return string
      * @throws \Exception
      */
-    public static function generateLabels(IApi $api, array $packetAttributes, $decomposition = LabelDecomposition::FULL)
+    public function generateLabels(array $packetAttributes, $decomposition = LabelDecomposition::FULL)
     {
         if (!in_array($decomposition, LabelDecomposition::$list)) {
             throw new WrongDataException(sprintf('unknown $decomposition only %s are allowed', implode(', ', LabelDecomposition::$list)));
@@ -51,7 +68,7 @@ class Label
             switch ($decomposition) {
                 case LabelDecomposition::FULL:
                     $pdf->AddPage();
-                    $pdf = self::generateLabelFull($api, $pdf, $packetAttribute);
+                    $pdf = $this->generateLabelFull($pdf, $packetAttribute);
                     break;
 
                 case LabelDecomposition::QUARTER:
@@ -63,7 +80,7 @@ class Label
                         $pdf->AddPage();
                     }
 
-                    $pdf = self::generateLabelQuarter($api, $pdf, $packetAttribute, $quarterPosition);
+                    $pdf = $this->generateLabelQuarter($pdf, $packetAttribute, $quarterPosition);
                     $quarterPosition++;
                     break;
             }
@@ -77,10 +94,10 @@ class Label
      * @param PacketAttributes $packetAttributes
      * @return \TCPDF
      */
-    public static function generateLabelFull(IApi $api, \TCPDF $pdf, PacketAttributes $packetAttributes)
+    public function generateLabelFull(\TCPDF $pdf, PacketAttributes $packetAttributes)
     {
-        $api->senderGetReturnRouting($packetAttributes->getEshop());
-        dump($api->packetStatus($packetAttributes->getId()));
+        $this->api->senderGetReturnRouting($packetAttributes->getEshop());
+        dump($this->api->packetStatus($packetAttributes->getId()));
 
         //$packetAttributes->getEshop()
         //$packetAttributes->getNumber();
@@ -182,7 +199,7 @@ class Label
      * @return \TCPDF
      * @throws \Exception
      */
-    public static function generateLabelQuarter($api, \TCPDF $pdf, PacketAttributes $packetAttributes, $position = LabelPosition::TOP_LEFT)
+    public function generateLabelQuarter(\TCPDF $pdf, PacketAttributes $packetAttributes, $position = LabelPosition::TOP_LEFT)
     {
         if (!in_array($position, [1, 2, 3, 4])) {
             throw new \Exception('Unknow position');
