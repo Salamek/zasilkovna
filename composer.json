@@ -1,6 +1,6 @@
 {
   "name": "salamek/zasilkovna",
-  "description": "Zasilkovna SOAP client in PHP",
+  "description": "Zasilkovna SOAP and REST client in PHP",
   "keywords": [
     "Zasilkovna",
     "SOAP",
