@@ -248,7 +248,8 @@ exception => array (2) [ ... ]*/
 
         $pdf->SetFillColor(0, 0, 0);
         $pdf->SetTextColor(255, 255, 255);
-        $pdf->MultiCell(70, 2, $branch['labelRouting'], ['LTRB' => ['width' => 1]], 'L', true, 0, $pTextX - 2, $pTextY + 32, false, 0, false, true, 0);
+        //    MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0, $valign='T', $fitcell=false) {
+        $pdf->MultiCell(80, 2, $branch['labelRouting'], ['LTRB' => ['width' => 1]], 'C', true, 0, $pTextX - 2, $pTextY + 32, false, 0, false, true, 15, 'T', true);
         $pdf->SetFillColor(255, 255, 255);
         $pdf->SetTextColor(0, 0, 0);
 
@@ -362,7 +363,7 @@ exception => array (2) [ ... ]*/
 
         $pdf->SetFillColor(0, 0, 0);
         $pdf->SetTextColor(255, 255, 255);
-        $pdf->MultiCell(42, 2, $branch['labelRouting'], ['LTRB' => ['width' => 1]], 'L', true, 0, 73 + $xPositionOffset, 70 + $yPositionOffset, false, 0, false, true, 0);
+        $pdf->MultiCell(42, 2, $branch['labelRouting'], ['LTRB' => ['width' => 1]], 'C', true, 0, 73 + $xPositionOffset, 70 + $yPositionOffset, false, 0, false, true, 7, 'T', true);
         $pdf->SetFillColor(255, 255, 255);
         $pdf->SetTextColor(0, 0, 0);
 
