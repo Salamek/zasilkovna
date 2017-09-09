@@ -25,6 +25,12 @@ or if you want master branch code:
 $ composer require salamek/zasilkovna:dev-master
 ```
 
+## Documentation
+
+See http://www.zasilkovna.cz/popis-api/ for more info
+
+## Example code
+
 ```php
 require "vendor/autoload.php";
 
