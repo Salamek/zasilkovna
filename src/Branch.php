@@ -40,7 +40,7 @@ class Branch
     /**
      * @throws \Exception
      */
-    private function initializeStorage()
+    public function initializeStorage()
     {
         if (!$this->branchStorage->isStorageValid())
         {
