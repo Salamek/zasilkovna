@@ -40,9 +40,9 @@ class Branch
     /**
      * @throws \Exception
      */
-    public function initializeStorage()
+    public function initializeStorage($force = false)
     {
-        if (!$this->branchStorage->isStorageValid())
+        if (!$this->branchStorage->isStorageValid() || $force)
         {
             $result = file_get_contents($this->jsonEndpoint);
             if (!$result)
