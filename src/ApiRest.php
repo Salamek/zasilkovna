@@ -108,12 +108,15 @@ class ApiRest implements IApi
 
     /**
      * @param array $result
-     * @throws RestFault
+     * @throws RestFault|PacketAttributesFault
      */
     private function proccessResult($result)
     {
         if ($result->status == 'fault')
         {
+            if ($result->fault = 'PacketAttributesFault') {
+        		throw new PacketAttributesFault($result->detail->attributes->fault);
+        	}
             throw new RestFault($result->fault.': '.$result->string.json_encode($result->detail));
         }
     }
