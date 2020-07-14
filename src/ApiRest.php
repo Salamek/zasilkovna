@@ -1,6 +1,7 @@
 <?php
 
 namespace Salamek\Zasilkovna;
+use Salamek\Zasilkovna\Exception\PacketAttributesFault;
 use Salamek\Zasilkovna\Exception\RestFault;
 use Salamek\Zasilkovna\Model\ClaimAttributes;
 use Salamek\Zasilkovna\Model\IModel;
