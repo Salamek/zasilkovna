@@ -49,9 +49,10 @@ final class Branch
 	 */
 	public function getBranchList(): array
 	{
+		$entity = $this->getHydrateToEntity();
 		$return = [];
 		foreach ($this->branchStorage->getBranchList() as $branch) {
-			$return[] = new ZasilkovnaBranch($branch);
+			$return[] = new $entity($branch);
 		}
 
 		return $return;
@@ -64,7 +65,9 @@ final class Branch
 			return null;
 		}
 
-		return new ZasilkovnaBranch($branch);
+		$entity = $this->getHydrateToEntity();
+
+		return new $entity($branch);
 	}
 
 
