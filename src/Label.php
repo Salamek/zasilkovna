@@ -27,11 +27,12 @@ final class Label
 
 	/**
 	 * @param PacketAttributes[] $packetAttributes
+	 * @throws WrongDataException
 	 */
 	public function generateLabels(array $packetAttributes, int $decomposition = LabelDecomposition::FULL): string
 	{
-		if (!in_array($decomposition, LabelDecomposition::$list)) {
-			throw new WrongDataException(sprintf('unknown $decomposition only %s are allowed', implode(', ', LabelDecomposition::$list)));
+		if (!in_array($decomposition, LabelDecomposition::$list, true)) {
+			throw new WrongDataException('Unknown $decomposition, because only "' . implode('", "', LabelDecomposition::$list) . '" are allowed');
 		}
 
 		$packageNumbers = [];
@@ -164,10 +165,9 @@ final class Label
 
 	public function generateLabelQuarter(TCPDF $pdf, PacketAttributes $packetAttributes, int $position = LabelPosition::TOP_LEFT): TCPDF
 	{
-		if (!in_array($position, [1, 2, 3, 4])) {
-			throw new \InvalidArgumentException('Unknow position');
+		if ($position < 1 || $position > 4) {
+			throw new \InvalidArgumentException('Unknown position, because "' . $position . '" given.');
 		}
-
 		switch ($position) {
 			default:
 			case LabelPosition::TOP_LEFT:
