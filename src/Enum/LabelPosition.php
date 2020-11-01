@@ -1,23 +1,25 @@
 <?php
-/**
- * Copyright (C) 2016 Adam Schubert <adam.schubert@sg1-game.net>.
- */
+
+declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Enum;
 
 
-class LabelPosition
+final class LabelPosition
 {
-    const TOP_LEFT = 1;
-    const TOP_RIGHT = 2;
-    const BOTTOM_LEFT = 3;
-    const BOTTOM_RIGHT = 4;
+	public const TOP_LEFT = 1;
 
-    /** @var array */
-    public static $list = [
-        self::TOP_LEFT,
-        self::TOP_RIGHT,
-        self::BOTTOM_LEFT,
-        self::BOTTOM_RIGHT
-    ];
+	public const TOP_RIGHT = 2;
+
+	public const BOTTOM_LEFT = 3;
+
+	public const BOTTOM_RIGHT = 4;
+
+	/** @var int[] */
+	public static array $list = [
+		self::TOP_LEFT,
+		self::TOP_RIGHT,
+		self::BOTTOM_LEFT,
+		self::BOTTOM_RIGHT,
+	];
 }

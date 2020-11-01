@@ -1,87 +1,58 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sadam
- * Date: 8.9.17
- * Time: 2:12
- */
+
+declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Model;
 
-/**
- * Class BranchStorageFile
- * @package Salamek\Zasilkovna\Model
- */
-class BranchStorageFile implements IBranchStorage
+final class BranchStorageFile implements IBranchStorage
 {
-    /** @var array */
-    private $branchList;
+	private array $branchList;
 
-    /** @var string */
-    private $filePath;
+	private string $filePath;
 
-    /** @var bool */
-    private $storageValid = false;
+	private bool $storageValid = false;
 
-    public function __construct($filePath = null)
-    {
-        if (is_null($filePath))
-        {
-            $filePath = sys_get_temp_dir().'/'.md5(__CLASS__);
-        }
 
-        $this->filePath = $filePath;
+	public function __construct(?string $filePath = null)
+	{
+		$this->filePath = $filePath ?? sys_get_temp_dir() . '/' . md5(__CLASS__);
+		if (\is_file($this->filePath)) {
+			$this->branchList = \json_decode(file_get_contents($this->filePath), true);
+			if (!empty($this->branchList)) {
+				$this->storageValid = true;
+			}
+		}
+	}
 
-        if (file_exists($this->filePath))
-        {
-            $this->branchList = json_decode(file_get_contents($this->filePath), true);
-            if (!empty($this->branchList))
-            {
-                $this->storageValid = true;
-            }
-        }
-    }
 
-    /**
-     * @return mixed
-     */
-    public function getBranchList()
-    {
-        return $this->branchList;
-    }
+	public function getBranchList(): array
+	{
+		return $this->branchList;
+	}
 
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function find($id)
-    {
-        foreach($this->branchList AS $item)
-        {
-            if ($item['id'] == $id)
-            {
-                return $item;
-                break;
-            }
-        }
-    }
 
-    /**
-     * @param $branchList
-     */
-    public function setBranchList($branchList)
-    {
-        $this->branchList = $branchList;
+	public function setBranchList(array $branchList): void
+	{
+		$this->branchList = $branchList;
+		file_put_contents($this->filePath, json_encode($branchList));
+		$this->storageValid = true;
+	}
 
-        file_put_contents($this->filePath, json_encode($branchList));
-        $this->storageValid = true;
-    }
 
-    /**
-     * @return bool
-     */
-    public function isStorageValid()
-    {
-        return $this->storageValid;
-    }
+	public function find(int $id): ?array
+	{
+		foreach ($this->branchList as $item) {
+			if ($item['id'] === $id) {
+				return $item;
+			}
+		}
+
+		return null;
+	}
+
+
+	public function isStorageValid(): bool
+	{
+		return $this->storageValid;
+	}
 }

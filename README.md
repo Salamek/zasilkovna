@@ -6,11 +6,6 @@
 This library provides SOAP and REST API implementations.
 Additionaly Branch implementation to fetch and store branch data and label implementation to generate labels.
 
-
-## Requirements
-
-- PHP 5.4 or higher
-
 ## Installation
 
 Install salamek/zasilkovna using  [Composer](http://getcomposer.org/)
@@ -41,25 +36,25 @@ $label = new Label($api, $branch);
 
 // To greate new packet
 $transporterPackage = new PacketAttributes(
-            'ORDERID',
-            'FirstName',
-            'LastName',
-            null,
-            'addressId',
-            null,
-            'Company',
-            'Email',
-            'Phone',
-            null,
-            null,
-            null,
-            'www',
-            false,
-            'Street',
-            'StreetNumber',
-            'City',
-            'ZipCode'
-        );
+	'ORDERID',
+	'FirstName',
+	'LastName',
+	null,
+	'addressId',
+	null,
+	'Company',
+	'Email',
+	'Phone',
+	null,
+	null,
+	null,
+	'www',
+	false,
+	'Street',
+	'StreetNumber',
+	'City',
+	'ZipCode'
+);
 
 $api->createPacket($transporterPackage);
 

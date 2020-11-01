@@ -1,193 +1,142 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Salamek\Zasilkovna\Model;
 
-/**
- * User: Adam Schubert
- * Date: 3.8.17
- * Time: 1:00
- */
-class ClaimAttributes implements IModel
+
+final class ClaimAttributes implements IModel
 {
-    /** @var int|null */
-    private $id;
+	private ?int $id;
 
-    /** @var string */
-    private $number;
+	private string $number;
 
-    /** @var string|null */
-    private $email;
+	private ?string $email;
 
-    /** @var string */
-    private $phone;
+	private string $phone;
 
-    /** @var float */
-    private $value;
+	private float $value;
 
-    /** @var string */
-    private $currency;
+	private string $currency;
 
-    /** @var string|null */
-    private $eshop;
+	private ?string $eshop;
 
-    /** @var boolean|null */
-    private $sendLabelToEmail;
-
-    /**
-     * PacketAttributes constructor.
-     * @param $number
-     * @param $value
-     * @param $currency
-     * @param null $id
-     * @param null $email
-     * @param null $eshop
-     * @param null $sendLabelToEmail
-     */
-    public function __construct($number, $value, $currency, $id = null, $email = null, $eshop = null, $sendLabelToEmail = null)
-    {
-        $this->number = $number;
-        $this->value = $value;
-        $this->currency = $currency;
-        $this->id = $id;
-        $this->email = $email;
-        $this->eshop = $eshop;
-        $this->sendLabelToEmail = $sendLabelToEmail;
-    }
+	private ?bool $sendLabelToEmail;
 
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
+	public function __construct(string $number, float $value, string $currency, ?int $id = null, ?string $email = null, ?string $eshop = null, ?bool $sendLabelToEmail = null)
+	{
+		$this->number = $number;
+		$this->value = $value;
+		$this->currency = $currency;
+		$this->id = $id;
+		$this->email = $email;
+		$this->eshop = $eshop;
+		$this->sendLabelToEmail = $sendLabelToEmail;
+	}
 
-    /**
-     * @param string $number
-     */
-    public function setNumber($number)
-    {
-        $this->number = $number;
-    }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
+	public function setSendLabelToEmail(bool $sendLabelToEmail): void
+	{
+		$this->sendLabelToEmail = $sendLabelToEmail;
+	}
 
-    /**
-     * @param string $phone
-     */
-    public function setPhone($phone)
-    {
-        $this->phone = $phone;
-    }
 
-    /**
-     * @param float $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
+	public function getId(): int
+	{
+		return $this->id;
+	}
 
-    /**
-     * @param string $currency
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
-    }
 
-    /**
-     * @param string $eshop
-     */
-    public function setEshop($eshop)
-    {
-        $this->eshop = $eshop;
-    }
+	public function setId(int $id): void
+	{
+		$this->id = $id;
+	}
 
-    /**
-     * @param boolean $sendLabelToEmail
-     */
-    public function setSendLabelToEmail($sendLabelToEmail)
-    {
-        $this->sendLabelToEmail = $sendLabelToEmail;
-    }
 
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+	public function getNumber(): string
+	{
+		return $this->number;
+	}
 
-    /**
-     * @return string
-     */
-    public function getNumber()
-    {
-        return $this->number;
-    }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
+	public function setNumber(string $number): void
+	{
+		$this->number = $number;
+	}
 
-    /**
-     * @return string
-     */
-    public function getPhone()
-    {
-        return $this->phone;
-    }
 
-    /**
-     * @return float
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
+	public function getEmail(): string
+	{
+		return $this->email;
+	}
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
 
-    /**
-     * @return string
-     */
-    public function getEshop()
-    {
-        return $this->eshop;
-    }
+	public function setEmail(string $email): void
+	{
+		$this->email = $email;
+	}
 
-    /**
-     * @return boolean
-     */
-    public function isSendLabelToEmail()
-    {
-        return $this->sendLabelToEmail;
-    }
 
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return get_object_vars($this);
-    }
+	public function getPhone(): string
+	{
+		return $this->phone;
+	}
+
+
+	public function setPhone(string $phone): void
+	{
+		$this->phone = $phone;
+	}
+
+
+	public function getValue(): float
+	{
+		return $this->value;
+	}
+
+
+	public function setValue(float $value): void
+	{
+		$this->value = $value;
+	}
+
+
+	public function getCurrency(): string
+	{
+		return $this->currency;
+	}
+
+
+	public function setCurrency(string $currency): void
+	{
+		$this->currency = $currency;
+	}
+
+
+	public function getEshop(): string
+	{
+		return $this->eshop;
+	}
+
+
+	public function setEshop(string $eshop): void
+	{
+		$this->eshop = $eshop;
+	}
+
+
+	public function isSendLabelToEmail(): bool
+	{
+		return $this->sendLabelToEmail;
+	}
+
+
+	/**
+	 * @return mixed[]
+	 */
+	public function toArray(): array
+	{
+		return get_object_vars($this);
+	}
 }

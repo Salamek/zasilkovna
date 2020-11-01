@@ -1,28 +1,32 @@
 {
-  "name": "salamek/zasilkovna",
-  "description": "Zasilkovna SOAP and REST client in PHP",
-  "keywords": [
-    "Zasilkovna",
-    "SOAP",
-    "API",
-    "REST"
-  ],
-  "homepage": "https://github.com/Salamek/zasilkovna",
-  "license": ["LGPL-3.0"],
-  "authors": [
-    {
-      "name": "Adam Schubet",
-      "homepage": "https://github.com/Salamek/zasilkovna"
-    }
-  ],
-  "autoload": {
-    "classmap": ["src/"]
-  },
-  "require": {
-    "php": ">=5.4.0",
-    "spatie/array-to-xml": "2.2.1|^2.7.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^5.8"
-  }
+	"name": "salamek/zasilkovna",
+	"description": "Zasilkovna SOAP and REST client in PHP",
+	"keywords": [
+		"Zasilkovna",
+		"SOAP",
+		"API",
+		"REST"
+	],
+	"homepage": "https://github.com/salamek/zasilkovna",
+	"license": [
+		"LGPL-3.0"
+	],
+	"authors": [
+		{
+			"name": "Adam Schubet",
+			"homepage": "https://github.com/Salamek/zasilkovna"
+		}
+	],
+	"autoload": {
+		"classmap": [
+			"src/"
+		]
+	},
+	"require": {
+		"php": ">=7.4.0",
+		"spatie/array-to-xml": "2.2.1|^2.7.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^5.8"
+	}
 }

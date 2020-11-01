@@ -1,26 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Salamek\Zasilkovna\Exception;
 
-use function is_array;
 
-class PacketAttributesFault extends \Exception
+final class PacketAttributesFault extends \Exception
 {
+	private array $fails = [];
 
-	private $fails;
 
 	public function __construct($fails)
 	{
-
-		$fails = !is_array($fails) ? [$fails] : $fails;
-
+		$fails = !\is_array($fails) ? [$fails] : $fails;
 		foreach ($fails as $fail) {
 			$this->fails[$fail->name] = $fail->fault;
 		}
-		parent::__construct($this->__toString());
+		parent::__construct((string) $this);
 	}
 
-	public function __toString()
+
+	public function __toString(): string
 	{
 		$string = '';
 		foreach ($this->fails as $name => $fail) {

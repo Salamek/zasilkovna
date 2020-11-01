@@ -1,13 +1,10 @@
 <?php
-/**
- * Copyright (C) 2017 Adam Schubert <adam.schubert@sg1-game.net>.
- */
+
+declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Exception;
 
-use Exception;
 
-class OfflineException extends Exception
+final class OfflineException extends \Exception
 {
-
 }

@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Salamek\Zasilkovna\Enum;
 
-/**
- * Created by PhpStorm.
- * User: sadam
- * Date: 3.8.17
- * Time: 1:03
- */
-class Currency
+final class Currency
 {
-    const CZK = 'CZK';
-    const EUR = 'EUR';
-    const HUF = 'HUF';
-    const PLN = 'PLN';
-    const RON = 'RON';
-    const UAH = 'UAH';
+	public const CZK = 'CZK';
+
+	public const EUR = 'EUR';
+
+	public const HUF = 'HUF';
+
+	public const PLN = 'PLN';
+
+	public const RON = 'RON';
+
+	public const UAH = 'UAH';
 }

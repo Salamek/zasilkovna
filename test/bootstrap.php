@@ -1,5 +1,5 @@
 <?php
-/**
- * Copyright (C) 2016 Adam Schubert <adam.schubert@sg1-game.net>.
- */
+
+declare(strict_types=1);
+
 require_once __DIR__ . '/../vendor/autoload.php';

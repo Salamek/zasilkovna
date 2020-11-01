@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sadam
- * Date: 7.9.17
- * Time: 2:22
- */
+
+declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Model;
 
 
 interface IModel
 {
-    public function toArray();
+	public function toArray(): array;
 }

@@ -1,35 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sadam
- * Date: 8.9.17
- * Time: 1:45
- */
+
+declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Model;
 
 
 interface IBranchStorage
 {
-    /**
-     * @return array
-     */
-    public function getBranchList();
+	/**
+	 * @return array
+	 */
+	public function getBranchList(): array;
 
-    /**
-     * @param $id
-     * @return array
-     */
-    public function find($id);
+	/**
+	 * @return array
+	 */
+	public function find(int $id): ?array;
 
-    /**
-     * @param $branchList
-     * @return void
-     */
-    public function setBranchList($branchList);
+	/**
+	 * @param mixed[] $branchList
+	 */
+	public function setBranchList(array $branchList): void;
 
-    /**
-     * @return boolean
-     */
-    public function isStorageValid();
+	public function isStorageValid(): bool;
 }

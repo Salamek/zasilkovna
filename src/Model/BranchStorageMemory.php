@@ -1,60 +1,47 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sadam
- * Date: 8.9.17
- * Time: 2:12
- */
+
+declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Model;
 
 
-class BranchStorageMemory implements IBranchStorage
+final class BranchStorageMemory implements IBranchStorage
 {
-    private $branchList;
+	private array $branchList;
 
-    public function __construct()
-    {
-        user_error('BranchStorageMemory is extremely slow and SHOULD NOT be used in production!', E_USER_NOTICE);
-    }
 
-    /**
-     * @return mixed
-     */
-    public function getBranchList()
-    {
-        return $this->branchList;
-    }
+	public function __construct()
+	{
+		user_error('BranchStorageMemory is extremely slow and SHOULD NOT be used in production!', E_USER_NOTICE);
+	}
 
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function find($id)
-    {
-        foreach($this->branchList AS $item)
-        {
-            if ($item['id'] == $id)
-            {
-                return $item;
-                break;
-            }
-        }
-    }
 
-    /**
-     * @param $branchList
-     */
-    public function setBranchList($branchList)
-    {
-        $this->branchList = $branchList;
-    }
+	public function getBranchList(): array
+	{
+		return $this->branchList;
+	}
 
-    /**
-     * @return bool
-     */
-    public function isStorageValid()
-    {
-        return !empty($this->branchList);
-    }
+
+	public function setBranchList(array $branchList): void
+	{
+		$this->branchList = $branchList;
+	}
+
+
+	public function find(int $id): ?array
+	{
+		foreach ($this->branchList as $item) {
+			if ($item['id'] === $id) {
+				return $item;
+			}
+		}
+
+		return null;
+	}
+
+
+	public function isStorageValid(): bool
+	{
+		return !empty($this->branchList);
+	}
 }
