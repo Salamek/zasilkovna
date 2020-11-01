@@ -52,30 +52,7 @@ final class PacketAttributes implements IModel
 	private ?string $customerBarcode;
 
 
-	public function __construct(
-		string $number,
-		string $name,
-		string $surname,
-		float $value,
-		int $addressId,
-		?int $id = null,
-		?string $company = null,
-		?string $email = null,
-		?string $phone = null,
-		?string $currency = null,
-		?float $cod = null,
-		?float $weight = null,
-		?string $eshop = null,
-		bool $adultContent = null,
-		?string $street = null,
-		?string $houseNumber = null,
-		?string $city = null,
-		?string $zip = null,
-		?int $carrierPickupPoint = null,
-		?string $carrierService = null,
-		?DispatchOrder $dispatchOrder = null,
-		?string $customerBarcode = null
-	)
+	public function __construct(string $number, string $name, string $surname, float $value, int $addressId, ?int $id = null, ?string $company = null, ?string $email = null, ?string $phone = null, ?string $currency = null, ?float $cod = null, ?float $weight = null, ?string $eshop = null, bool $adultContent = null, ?string $street = null, ?string $houseNumber = null, ?string $city = null, ?string $zip = null, ?int $carrierPickupPoint = null, ?string $carrierService = null, ?DispatchOrder $dispatchOrder = null, ?string $customerBarcode = null)
 	{
 		$this->number = $number;
 		$this->name = $name;
