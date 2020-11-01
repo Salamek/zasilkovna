@@ -1,118 +1,163 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Salamek\Zasilkovna;
+
+
 use Salamek\Zasilkovna\Exception\WrongDataException;
 use Salamek\Zasilkovna\Model\ClaimAttributes;
 use Salamek\Zasilkovna\Model\PacketAttributes;
 
-/**
- * User: Adam Schubert
- * Date: 3.8.17
- * Time: 0:27
- */
-class ApiSoap implements IApi
+final class ApiSoap implements IApi
 {
-    /** @var null|\SoapClient */
-    private $soap = null;
+	private ?\SoapClient $soap;
 
-    private $apiPassword;
+	private string $apiKey;
 
-    private $apiKey;
 
-    /** @var string */
-    private $wsdl = 'http://www.zasilkovna.cz/api/soap.wsdl';
+	public function __construct(string $apiKey)
+	{
+		if (trim($apiKey) === '') {
+			throw new \RuntimeException('API key can not be empty.');
+		}
+		$this->apiKey = $apiKey;
+		try {
+			$this->soap = new \SoapClient('http://www.zasilkovna.cz/api/soap.wsdl');
+		} catch (\Exception $e) {
+			throw new \InvalidArgumentException('Failed to build soap client');
+		}
+	}
 
-    public function __construct($apiPassword, $apiKey)
-    {
-        $this->apiPassword = $apiPassword;
-        $this->apiKey = $apiKey;
 
-        try {
-            $this->soap = new \SoapClient($this->wsdl);
-        } catch (\Exception $e) {
-            throw new \Exception('Failed to build soap client');
-        }
-    }
+	/**
+	 * @return mixed
+	 * @throws WrongDataException
+	 */
+	public function packetAttributesValid(PacketAttributes $attributes)
+	{
+		try {
+			return $this->soap->packetAttributesValid($this->apiKey, $attributes);
+		} catch (\SoapFault $e) {
+			throw new WrongDataException($e->getMessage(), $e->getCode(), $e->getPrevious());
+		}
+	}
 
-    /**
-     * @param PacketAttributes $attributes
-     * @return mixed
-     * @throws WrongDataException
-     */
-    public function packetAttributesValid(PacketAttributes $attributes)
-    {
-        try
-        {
-            return $this->soap->packetAttributesValid($this->apiPassword, $attributes);
-        }
-        catch (\SoapFault $e)
-        {
-            throw new WrongDataException($e->getMessage(), $e->getCode(), $e->getPrevious());
-        }
-    }
 
-    public function packetClaimAttributesValid(ClaimAttributes $attributes)
-    {
-        return $this->soap->packetClaimAttributesValid($this->apiPassword, $attributes);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetClaimAttributesValid(ClaimAttributes $attributes)
+	{
+		return $this->soap->packetClaimAttributesValid($this->apiKey, $attributes);
+	}
 
-    public function createPacket(PacketAttributes $attributes)
-    {
-        return $this->soap->createPacket($this->apiPassword, $attributes);
-    }
 
-    public function createPacketClaim(ClaimAttributes $attributes)
-    {
-        return $this->soap->createPacketClaim($this->apiPassword, $attributes);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function createPacket(PacketAttributes $attributes)
+	{
+		return $this->soap->createPacket($this->apiKey, $attributes);
+	}
 
-    public function createShipment(/*int*/ $packetId, /*string*/ $customBarcode)
-    {
-        return $this->soap->createShipment($this->apiPassword, $packetId, $customBarcode);
-    }
 
-    public function packetStatus(/*int*/ $packetId)
-    {
-        return $this->soap->packetStatus($this->apiPassword, $packetId);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function createPacketClaim(ClaimAttributes $attributes)
+	{
+		return $this->soap->createPacketClaim($this->apiKey, $attributes);
+	}
 
-    public function packetTracking(/*int*/ $packetId)
-    {
-        return $this->soap->packetTracking($this->apiPassword, $packetId);
-    }
 
-    public function packetGetStoredUntil(/*int*/ $packetId)
-    {
-        return $this->soap->packetGetStoredUntil($this->apiPassword, $packetId);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function createShipment(int $packetId, string $customBarcode)
+	{
+		return $this->soap->createShipment($this->apiKey, $packetId, $customBarcode);
+	}
 
-    public function packetSetStoredUntil(/*int*/ $packetId, \DateTimeInterface $date)
-    {
-        return $this->soap->packetSetStoredUntil($this->apiPassword, $packetId, $date);
-    }
 
-    public function barcodePng(/*string*/ $barcode)
-    {
-        return $this->soap->barcodePng($this->apiPassword, $barcode);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetStatus(int $packetId)
+	{
+		return $this->soap->packetStatus($this->apiKey, $packetId);
+	}
 
-    public function packetLabelPdf(/*int*/ $packetId, /*string*/ $format, /*int*/ $offset)
-    {
-        return $this->soap->packetLabelPdf($this->apiPassword, $packetId, $format, $offset);
-    }
 
-    public function packetsLabelsPdf(array/*PacketIds*/ $packetIds, /*string*/ $format, /*int*/ $offset)
-    {
-        return $this->soap->packetsLabelsPdf($this->apiPassword, $packetIds, $format, $offset);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetTracking(int $packetId)
+	{
+		return $this->soap->packetTracking($this->apiKey, $packetId);
+	}
 
-    public function packetCourierNumber(/*int*/ $packetId)
-    {
-        return $this->soap->packetCourierNumber($this->apiPassword, $packetId);
-    }
 
-    public function senderGetReturnRouting(/*string*/ $senderLabel)
-    {
-        return $this->soap->senderGetReturnRouting($this->apiPassword, $senderLabel);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetGetStoredUntil(int $packetId)
+	{
+		return $this->soap->packetGetStoredUntil($this->apiKey, $packetId);
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function packetSetStoredUntil(int $packetId, \DateTimeInterface $date)
+	{
+		return $this->soap->packetSetStoredUntil($this->apiKey, $packetId, $date);
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function barcodePng(string $barcode)
+	{
+		return $this->soap->barcodePng($this->apiKey, $barcode);
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function packetLabelPdf(int $packetId, string $format, int $offset)
+	{
+		return $this->soap->packetLabelPdf($this->apiKey, $packetId, $format, $offset);
+	}
+
+
+	/**
+	 * @param int[] $packetIds
+	 * @return mixed
+	 */
+	public function packetsLabelsPdf(array $packetIds, string $format, int $offset)
+	{
+		return $this->soap->packetsLabelsPdf($this->apiKey, $packetIds, $format, $offset);
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function packetCourierNumber(int $packetId)
+	{
+		return $this->soap->packetCourierNumber($this->apiKey, $packetId);
+	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function senderGetReturnRouting(string $senderLabel)
+	{
+		return $this->soap->senderGetReturnRouting($this->apiKey, $senderLabel);
+	}
 }

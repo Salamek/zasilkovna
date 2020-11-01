@@ -1,80 +1,84 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sadam
- * Date: 8.9.17
- * Time: 1:08
- */
+
+declare(strict_types=1);
 
 namespace Salamek\Zasilkovna;
 
 
+use Salamek\Zasilkovna\Entity\IBranch;
+use Salamek\Zasilkovna\Entity\ZasilkovnaBranch;
 use Salamek\Zasilkovna\Model\IBranchStorage;
 
-class Branch
+final class Branch
 {
-    /** @var string */
-    private $jsonEndpoint = 'https://www.zasilkovna.cz/api/v3/%s/branch.json';
+	private IBranchStorage $branchStorage;
 
-    /** @var string */
-    private $apiKey;
+	private string $jsonEndpoint;
 
-    /** @var IBranchStorage */
-    private $branchStorage;
+	private ?string $hydrateToEntity = null;
 
-    /**
-     * Branch constructor.
-     * @param $apiKey
-     * @param IBranchStorage $branchStorage
-     */
-    public function __construct($apiKey, IBranchStorage $branchStorage)
-    {
-        $this->apiKey = $apiKey;
-        $this->branchStorage = $branchStorage;
 
-        $this->jsonEndpoint = sprintf($this->jsonEndpoint, $this->apiKey);
+	public function __construct(string $apiKey, IBranchStorage $branchStorage)
+	{
+		if (trim($apiKey) === '') {
+			throw new \RuntimeException('API key can not be empty.');
+		}
+		$this->branchStorage = $branchStorage;
+		$this->jsonEndpoint = 'https://www.zasilkovna.cz/api/v3/' . $apiKey . '/branch.json';
+		$this->initializeStorage();
+	}
 
-        $this->initializeStorage();
-    }
 
-    /**
-     * @throws \Exception
-     */
-    public function initializeStorage($force = false)
-    {
-        if (!$this->branchStorage->isStorageValid() || $force)
-        {
-            $result = file_get_contents($this->jsonEndpoint);
-            if (!$result)
-            {
-                throw new \Exception('Failed to open JSON endpoint');
-            }
+	public function initializeStorage(bool $force = false): void
+	{
+		if ($force || !$this->branchStorage->isStorageValid()) {
+			if (!($result = file_get_contents($this->jsonEndpoint))) {
+				throw new \RuntimeException('Failed to open JSON endpoint');
+			}
+			if (!($data = \json_decode($result, true)) || !array_key_exists('data', $data)) {
+				throw new \RuntimeException('Failed to decode JSON');
+			}
 
-            $data = json_decode($result, true);
-            if (!$data || !array_key_exists('data', $data))
-            {
-                throw new \Exception('Failed to decode JSON');
-            }
-            
-            $this->branchStorage->setBranchList($data['data']);
-        }
-    }
+			$this->branchStorage->setBranchList($data['data']);
+		}
+	}
 
-    /**
-     * @return mixed
-     * @throws \Exception
-     */
-    public function getBranchList()
-    {
-        return $this->branchStorage->getBranchList();
-    }
 
-    /**
-     * @param $id
-     * @return object
-     */
-    public function find($id)
-    {
-        return $this->branchStorage->find($id);
-    }
+	/**
+	 * @return IBranch[]
+	 */
+	public function getBranchList(): array
+	{
+		$entity = $this->getHydrateToEntity();
+		$return = [];
+		foreach ($this->branchStorage->getBranchList() as $branch) {
+			$return[] = new $entity($branch);
+		}
+
+		return $return;
+	}
+
+
+	public function find(int $id): ?IBranch
+	{
+		if (($branch = $this->branchStorage->find($id)) === null) {
+			return null;
+		}
+
+		$entity = $this->getHydrateToEntity();
+
+		return new $entity($branch);
+	}
+
+
+	public function getHydrateToEntity(): string
+	{
+		return $this->hydrateToEntity ?? ZasilkovnaBranch::class;
+	}
+
+
+	public function setHydrateToEntity(?string $hydrateToEntity): void
+	{
+		$this->hydrateToEntity = $hydrateToEntity;
+	}
 }

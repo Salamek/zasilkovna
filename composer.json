@@ -1,28 +1,46 @@
 {
-  "name": "salamek/zasilkovna",
-  "description": "Zasilkovna SOAP and REST client in PHP",
-  "keywords": [
-    "Zasilkovna",
-    "SOAP",
-    "API",
-    "REST"
-  ],
-  "homepage": "https://github.com/Salamek/zasilkovna",
-  "license": ["LGPL-3.0"],
-  "authors": [
-    {
-      "name": "Adam Schubet",
-      "homepage": "https://github.com/Salamek/zasilkovna"
-    }
-  ],
-  "autoload": {
-    "classmap": ["src/"]
-  },
-  "require": {
-    "php": ">=5.4.0",
-    "spatie/array-to-xml": "2.2.1|^2.7.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^5.8"
-  }
+	"name": "salamek/zasilkovna",
+	"description": "Zasilkovna SOAP and REST client in PHP",
+	"keywords": [
+		"Zasilkovna",
+		"SOAP",
+		"API",
+		"REST"
+	],
+	"homepage": "https://github.com/salamek/zasilkovna",
+	"license": [
+		"LGPL-3.0"
+	],
+	"authors": [
+		{
+			"name": "Adam Schubet",
+			"homepage": "https://github.com/Salamek/zasilkovna"
+		},
+		{
+			"name": "Jan Barášek",
+			"homepage": "https://baraja.cz"
+		}
+	],
+	"require": {
+		"php": ">=7.4.0",
+		"tecnickcom/tcpdf": "^6.3",
+		"spatie/array-to-xml": "^2.15"
+	},
+	"require-dev": {
+		"phpstan/phpstan": "^0.12.18",
+		"tracy/tracy": "^2.7",
+		"phpstan/phpstan-nette": "^0.12.6",
+		"symplify/easy-coding-standard": "^7.2"
+	},
+	"autoload": {
+		"classmap": [
+			"src/"
+		]
+	},
+	"scripts": {
+		"phpstan": [
+			"vendor/bin/phpstan analyse src -c phpstan.neon --level 6 --no-progress"
+		]
+	},
+	"minimum-stability": "stable"
 }

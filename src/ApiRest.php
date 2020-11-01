@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Salamek\Zasilkovna;
+
+
 use Salamek\Zasilkovna\Exception\PacketAttributesFault;
 use Salamek\Zasilkovna\Exception\RestFault;
 use Salamek\Zasilkovna\Model\ClaimAttributes;
@@ -8,249 +12,224 @@ use Salamek\Zasilkovna\Model\IModel;
 use Salamek\Zasilkovna\Model\PacketAttributes;
 use Spatie\ArrayToXml\ArrayToXml;
 
-/**
- * User: Adam Schubert
- * Date: 3.8.17
- * Time: 0:27
- */
-class ApiRest implements IApi
+final class ApiRest implements IApi
 {
-    private $restApiUrl = 'https://www.zasilkovna.cz/api/rest';
+	private string $apiKey;
 
-    private $apiPassword;
 
-    private $apiKey;
+	public function __construct(string $apiKey)
+	{
+		if (trim($apiKey) === '') {
+			throw new \RuntimeException('API key can not be empty.');
+		}
+		$this->apiKey = $apiKey;
+	}
 
-    /**
-     * ApiRest constructor.
-     * @param $apiPassword
-     * @param $apiKey
-     */
-    public function __construct($apiPassword, $apiKey)
-    {
-        $this->apiPassword = $apiPassword;
-        $this->apiKey = $apiKey;
-    }
 
-    /**
-     * @param $root
-     * @param array $array
-     * @return string
-     */
-    private function array2xml($root, array $array)
-    {
-        return ArrayToXml::convert($array, $root);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetAttributesValid(PacketAttributes $attributes)
+	{
+		return $this->callApi(__FUNCTION__, $attributes);
+	}
 
-    /**
-     * @param $xml
-     * @return mixed
-     */
-    private function xml2object($xml)
-    {
-        $simplexml = simplexml_load_string($xml, "SimpleXMLElement", LIBXML_NOCDATA);
-        $json = json_encode($simplexml);
-        return json_decode($json, false);
-    }
 
-    /**
-     * @param $xml
-     * @return mixed
-     */
-    private function post($xml)
-    {
-        $opts = ['http' =>
-            [
-                'method'  => 'POST',
-                'header'  => 'Content-type: text/xml',
-                'content' => $xml
-            ]
-        ];
+	/**
+	 * @return mixed
+	 */
+	public function packetClaimAttributesValid(ClaimAttributes $attributes)
+	{
+		return $this->callApi(__FUNCTION__, $attributes);
+	}
 
-        $context  = stream_context_create($opts);
 
-        return file_get_contents($this->restApiUrl, false, $context);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function createPacket(PacketAttributes $attributes)
+	{
+		return $this->callApi(__FUNCTION__, $attributes);
+	}
 
-    /**
-     * @param $method
-     * @param IModel|array $object
-     * @return mixed
-     * @throws RestFault
-     */
-    private function callApi($method, $object)
-    {
-        $xmlArray = [
-            'apiPassword' => $this->apiPassword
-        ];
 
-        if ($object instanceof IModel)
-        {
-            $path = explode('\\', get_class($object));
-            $dataName =  lcfirst(array_pop($path));
-            $data = $object->toArray();
+	/**
+	 * @return mixed
+	 */
+	public function createPacketClaim(ClaimAttributes $attributes)
+	{
+		return $this->callApi(__FUNCTION__, $attributes);
+	}
 
-            $xmlArray[$dataName] = $data;
-        }
-        elseif (is_array($object))
-        {
-            $xmlArray +=  $object;
-        }
 
-        $xml = $this->array2xml($method, $xmlArray);
+	/**
+	 * @return mixed
+	 */
+	public function createShipment(int $packetId, string $customBarcode)
+	{
+		return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'customBarcode' => $customBarcode]);
+	}
 
-        $resultXml = $this->post($xml);
 
-        $result = $this->xml2object($resultXml);
-        $this->proccessResult($result);
+	/**
+	 * @return mixed
+	 */
+	public function packetStatus(int $packetId)
+	{
+		return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
+	}
 
-        return (isset($result->result) ? $result->result : null);
-    }
 
-    /**
-     * @param array $result
-     * @throws RestFault|PacketAttributesFault
-     */
-    private function proccessResult($result)
-    {
-        if ($result->status == 'fault')
-        {
-            if ($result->fault == 'PacketAttributesFault') {
-                throw new PacketAttributesFault($result->detail->attributes->fault);
-            }
-            throw new RestFault($result->fault.': '.$result->string.json_encode($result->detail));
-        }
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetTracking(int $packetId)
+	{
+		return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
+	}
 
-    /**
-     * @param PacketAttributes $attributes
-     * @return mixed
-     */
-    public function packetAttributesValid(PacketAttributes $attributes)
-    {
-        return $this->callApi(__FUNCTION__, $attributes);
-    }
 
-    /**
-     * @param ClaimAttributes $attributes
-     * @return mixed
-     */
-    public function packetClaimAttributesValid(ClaimAttributes $attributes)
-    {
-        return $this->callApi(__FUNCTION__, $attributes);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetGetStoredUntil(int $packetId)
+	{
+		return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
+	}
 
-    /**
-     * @param PacketAttributes $attributes
-     * @return mixed
-     */
-    public function createPacket(PacketAttributes $attributes)
-    {
-        return $this->callApi(__FUNCTION__, $attributes);
-    }
 
-    /**
-     * @param ClaimAttributes $attributes
-     * @return mixed
-     */
-    public function createPacketClaim(ClaimAttributes $attributes)
-    {
-        return $this->callApi(__FUNCTION__, $attributes);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetSetStoredUntil(int $packetId, \DateTimeInterface $date)
+	{
+		return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'date' => $date->format('Y-m-d H:i:s')]);
+	}
 
-    /**
-     * @param $packetId
-     * @param $customBarcode
-     * @return mixed
-     */
-    public function createShipment(/*int*/ $packetId, /*string*/ $customBarcode)
-    {
-        return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'customBarcode' => $customBarcode]);
-    }
 
-    /**
-     * @param $packetId
-     * @return mixed
-     */
-    public function packetStatus(/*int*/ $packetId)
-    {
-        return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function barcodePng(string $barcode)
+	{
+		return $this->callApi(__FUNCTION__, ['barcode' => $barcode]);
+	}
 
-    /**
-     * @param $packetId
-     * @return mixed
-     */
-    public function packetTracking(/*int*/ $packetId)
-    {
-        return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
-    }
 
-    /**
-     * @param $packetId
-     * @return mixed
-     */
-    public function packetGetStoredUntil(/*int*/ $packetId)
-    {
-        return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetLabelPdf(int $packetId, string $format, int $offset)
+	{
+		return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'format' => $format, 'offset' => $offset]);
+	}
 
-    /**
-     * @param $packetId
-     * @param \DateTimeInterface $date
-     * @return mixed
-     */
-    public function packetSetStoredUntil(/*int*/ $packetId, \DateTimeInterface $date)
-    {
-        return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'date' => $date->format('Y-m-d H:i:s')]);
-    }
 
-    /**
-     * @param $barcode
-     * @return mixed
-     */
-    public function barcodePng(/*string*/ $barcode)
-    {
-        return $this->callApi(__FUNCTION__, ['barcode' => $barcode]);
-    }
+	/**
+	 * @param int[] $packetIds
+	 * @return mixed
+	 */
+	public function packetsLabelsPdf(array $packetIds, string $format, int $offset)
+	{
+		return $this->callApi(__FUNCTION__, ['packetIds' => $packetIds, 'format' => $format, 'offset' => $offset]);
+	}
 
-    /**
-     * @param $packetId
-     * @param $format
-     * @param $offset
-     * @return mixed
-     */
-    public function packetLabelPdf(/*int*/ $packetId, /*string*/ $format, /*int*/ $offset)
-    {
-        return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'format' => $format, 'offset' => $offset]);
-    }
 
-    /**
-     * @param array $packetIds
-     * @param $format
-     * @param $offset
-     * @return mixed
-     */
-    public function packetsLabelsPdf(array/*PacketIds*/ $packetIds, /*string*/ $format, /*int*/ $offset)
-    {
-        return $this->callApi(__FUNCTION__, ['packetIds' => $packetIds, 'format' => $format, 'offset' => $offset]);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function packetCourierNumber(int $packetId)
+	{
+		return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
+	}
 
-    /**
-     * @param $packetId
-     * @return mixed
-     */
-    public function packetCourierNumber(/*int*/ $packetId)
-    {
-        return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
-    }
 
-    /**
-     * @param $senderLabel
-     * @return mixed
-     */
-    public function senderGetReturnRouting(/*string*/ $senderLabel)
-    {
-        return $this->callApi(__FUNCTION__, ['senderLabel' => $senderLabel]);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function senderGetReturnRouting(string $senderLabel)
+	{
+		return $this->callApi(__FUNCTION__, ['senderLabel' => $senderLabel]);
+	}
+
+
+	/**
+	 * @param mixed[] $array
+	 * @return string
+	 */
+	private function array2xml(string $root, array $array): string
+	{
+		return ArrayToXml::convert($array, $root);
+	}
+
+
+	/**
+	 * @return mixed[]
+	 */
+	private function xml2Array(string $xml): array
+	{
+		$simplexml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+		return json_decode(json_encode($simplexml), true, 512, JSON_THROW_ON_ERROR);
+	}
+
+
+	private function post(string $xml): string
+	{
+		$context = stream_context_create([
+			'http' => [
+				'method' => 'POST',
+				'header' => 'Content-type: text/xml',
+				'content' => $xml,
+			],
+		]);
+
+		return file_get_contents('https://www.zasilkovna.cz/api/rest', false, $context);
+	}
+
+
+	/**
+	 * @param IModel|array|mixed $object
+	 * @return mixed[]|null
+	 * @throws RestFault
+	 */
+	private function callApi(string $method, $object)
+	{
+		$xmlArray = [
+			'apiPassword' => $this->apiKey,
+		];
+
+		if ($object instanceof IModel) {
+			$path = explode('\\', get_class($object));
+			$xmlArray[lcfirst(array_pop($path))] = $object->toArray();
+		} elseif (is_array($object)) {
+			$xmlArray += $object;
+		} else {
+			throw new \InvalidArgumentException('Invalid argument: Object must be a entity of type "' . IModel::class . '" or array, but "' . \gettype($object) . '" given.');
+		}
+
+		$result = $this->xml2Array(
+			$this->post(
+				$this->array2xml($method, $xmlArray)
+			)
+		);
+		$this->processResult($result);
+
+		return $result['result'] ?? null;
+	}
+
+
+	/**
+	 * @param mixed [] $result
+	 * @throws RestFault|PacketAttributesFault
+	 */
+	private function processResult(array $result): void
+	{
+		if (($result['status'] ?? '') === 'fault') {
+			if ($result['fault'] === 'PacketAttributesFault') {
+				throw new PacketAttributesFault($result['detail']['attributes']['fault'] ?? 'Unknown error.');
+			}
+			throw new RestFault($result['fault'] . ': ' . ($result['string'] ?? 'Unknown error') . json_encode($result['detail'] ?? ''));
+		}
+	}
 }

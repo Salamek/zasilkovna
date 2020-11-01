@@ -1,19 +1,19 @@
 <?php
-/**
- * Copyright (C) 2016 Adam Schubert <adam.schubert@sg1-game.net>.
- */
+
+declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Enum;
 
 
-class LabelDecomposition
+final class LabelDecomposition
 {
-    const FULL = 1;
-    const QUARTER = 4;
+	public const FULL = 1;
 
-    /** @var array */
-    public static $list = [
-        self::FULL,
-        self::QUARTER
-    ];
+	public const QUARTER = 4;
+
+	/** @var int[] */
+	public static array $list = [
+		self::FULL,
+		self::QUARTER,
+	];
 }
