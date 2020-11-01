@@ -11,7 +11,6 @@ use Salamek\Zasilkovna\Exception\WrongDataException;
 use Salamek\Zasilkovna\Model\PacketAttributes;
 use TCPDF;
 
-
 final class Label
 {
 	private IApi $api;

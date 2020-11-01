@@ -14,12 +14,15 @@ use Spatie\ArrayToXml\ArrayToXml;
 
 final class ApiRest implements IApi
 {
-	private string $apiPassword;
+	private string $apiKey;
 
 
-	public function __construct(string $apiPassword)
+	public function __construct(string $apiKey)
 	{
-		$this->apiPassword = $apiPassword;
+		if (trim($apiKey) === '') {
+			throw new \RuntimeException('API key can not be empty.');
+		}
+		$this->apiKey = $apiKey;
 	}
 
 
@@ -196,7 +199,7 @@ final class ApiRest implements IApi
 	private function callApi(string $method, $object)
 	{
 		$xmlArray = [
-			'apiPassword' => $this->apiPassword,
+			'apiPassword' => $this->apiKey,
 		];
 
 		if ($object instanceof IModel) {
