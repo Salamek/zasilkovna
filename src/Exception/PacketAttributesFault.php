@@ -7,14 +7,17 @@ namespace Salamek\Zasilkovna\Exception;
 
 final class PacketAttributesFault extends \Exception
 {
+	/** @var string[] (name => fail) */
 	private array $fails = [];
 
 
+	/**
+	 * @param object|object[] $fails
+	 */
 	public function __construct($fails)
 	{
-		$fails = !\is_array($fails) ? [$fails] : $fails;
-		foreach ($fails as $fail) {
-			$this->fails[$fail->name] = $fail->fault;
+		foreach (((array) $fails) as $fail) {
+			$this->fails[$fail->name] = (string) $fail->fault;
 		}
 		parent::__construct((string) $this);
 	}
@@ -22,11 +25,11 @@ final class PacketAttributesFault extends \Exception
 
 	public function __toString(): string
 	{
-		$string = '';
+		$return = '';
 		foreach ($this->fails as $name => $fail) {
-			$string .= $name . ': ' . $fail . ', ';
+			$return .= $name . ': ' . $fail . ', ';
 		}
 
-		return trim($string, ', ');
+		return trim($return, ', ');
 	}
 }

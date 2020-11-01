@@ -7,5 +7,8 @@ namespace Salamek\Zasilkovna\Model;
 
 interface IModel
 {
+	/**
+	 * @return mixed[]
+	 */
 	public function toArray(): array;
 }

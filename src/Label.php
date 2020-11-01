@@ -83,6 +83,9 @@ final class Label
 	{
 		$returnRouting = $this->api->senderGetReturnRouting($packetAttributes->getEshop());
 		$branch = $this->branch->find($packetAttributes->getAddressId());
+		if ($branch === null) {
+			throw new \InvalidArgumentException('Branch "' . $packetAttributes->getAddressId() . '" does not exist.');
+		}
 
 		$x = 17;
 		$pdf->Image(__DIR__ . '/../assets/logo.png', $x + 10, 120, 100, '', 'PNG');
@@ -152,12 +155,12 @@ final class Label
 
 		$pdf->SetFillColor(0, 0, 0);
 		$pdf->SetTextColor(255, 255, 255);
-		$pdf->MultiCell(80, 2, $branch['labelRouting'], ['LTRB' => ['width' => 1]], 'C', true, 0, $pTextX - 2, $pTextY + 32, false, 0, false, true, 15, 'T', true);
+		$pdf->MultiCell(80, 2, $branch->getLabelRouting(), ['LTRB' => ['width' => 1]], 'C', true, 0, $pTextX - 2, $pTextY + 32, false, 0, false, true, 15, 'T', true);
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetTextColor(0, 0, 0);
 
 		$pdf->SetFont($pdf->getFontFamily(), '', 29);
-		$pdf->Text($pTextX - 3, $pTextY + 50, $branch['name']);
+		$pdf->Text($pTextX - 3, $pTextY + 50, $branch->getName());
 
 		return $pdf;
 	}
@@ -251,12 +254,12 @@ final class Label
 
 		$pdf->SetFillColor(0, 0, 0);
 		$pdf->SetTextColor(255, 255, 255);
-		$pdf->MultiCell(42, 2, $branch['labelRouting'], ['LTRB' => ['width' => 1]], 'C', true, 0, 73 + $xPositionOffset, 70 + $yPositionOffset, false, 0, false, true, 7, 'T', true);
+		$pdf->MultiCell(42, 2, $branch->getLabelRouting(), ['LTRB' => ['width' => 1]], 'C', true, 0, 73 + $xPositionOffset, 70 + $yPositionOffset, false, 0, false, true, 7, 'T', true);
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetTextColor(0, 0, 0);
 
 		$pdf->SetFont($pdf->getFontFamily(), '', 16);
-		$pdf->Text(73 + $xPositionOffset, 82 + $yPositionOffset, $branch['name']);
+		$pdf->Text(73 + $xPositionOffset, 82 + $yPositionOffset, $branch->getName());
 
 		return $pdf;
 	}

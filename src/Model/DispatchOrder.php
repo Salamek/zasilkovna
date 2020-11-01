@@ -6,11 +6,17 @@ namespace Salamek\Zasilkovna\Model;
 
 class DispatchOrder implements IModel
 {
+	/** @var mixed */
 	private $goods;
 
+	/** @var mixed */
 	private $pdf;
 
 
+	/**
+	 * @param mixed $goods
+	 * @param mixed $pdf
+	 */
 	public function __construct($goods, $pdf)
 	{
 		$this->goods = $goods;
@@ -30,7 +36,7 @@ class DispatchOrder implements IModel
 	/**
 	 * @param mixed $goods
 	 */
-	public function setGoods($goods)
+	public function setGoods($goods): void
 	{
 		$this->goods = $goods;
 	}
@@ -48,14 +54,14 @@ class DispatchOrder implements IModel
 	/**
 	 * @param mixed $pdf
 	 */
-	public function setPdf($pdf)
+	public function setPdf($pdf): void
 	{
 		$this->pdf = $pdf;
 	}
 
 
 	/**
-	 * @return array
+	 * @return mixed[]
 	 */
 	public function toArray(): array
 	{

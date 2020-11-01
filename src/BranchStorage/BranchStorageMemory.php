@@ -10,6 +10,7 @@ namespace Salamek\Zasilkovna\Model;
  */
 final class BranchStorageMemory implements IBranchStorage
 {
+	/** @var mixed[][]|null */
 	private ?array $branchList = null;
 
 

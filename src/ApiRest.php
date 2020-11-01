@@ -154,26 +154,23 @@ final class ApiRest implements IApi
 
 
 	/**
-	 * @param $root
-	 * @param array $array
+	 * @param mixed[] $array
 	 * @return string
 	 */
-	private function array2xml($root, array $array): string
+	private function array2xml(string $root, array $array): string
 	{
 		return ArrayToXml::convert($array, $root);
 	}
 
 
 	/**
-	 * @param $xml
-	 * @return mixed
+	 * @return mixed[]
 	 */
-	private function xml2object($xml)
+	private function xml2Array(string $xml): array
 	{
 		$simplexml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
-		$json = json_encode($simplexml);
 
-		return json_decode($json, false);
+		return json_decode(json_encode($simplexml), true, 512, JSON_THROW_ON_ERROR);
 	}
 
 
@@ -192,8 +189,8 @@ final class ApiRest implements IApi
 
 
 	/**
-	 * @param IModel|array $object
-	 * @return mixed
+	 * @param IModel|array|mixed $object
+	 * @return mixed[]|null
 	 * @throws RestFault
 	 */
 	private function callApi(string $method, $object)
@@ -204,34 +201,35 @@ final class ApiRest implements IApi
 
 		if ($object instanceof IModel) {
 			$path = explode('\\', get_class($object));
-			$dataName = lcfirst(array_pop($path));
-			$data = $object->toArray();
-			$xmlArray[$dataName] = $data;
+			$xmlArray[lcfirst(array_pop($path))] = $object->toArray();
 		} elseif (is_array($object)) {
 			$xmlArray += $object;
+		} else {
+			throw new \InvalidArgumentException('Invalid argument: Object must be a entity of type "' . IModel::class . '" or array, but "' . \gettype($object) . '" given.');
 		}
 
-		$result = $this->xml2object(
+		$result = $this->xml2Array(
 			$this->post(
 				$this->array2xml($method, $xmlArray)
 			)
 		);
-		$this->proccessResult($result);
+		$this->processResult($result);
 
-		return $result->result ?? null;
+		return $result['result'] ?? null;
 	}
 
 
 	/**
+	 * @param mixed [] $result
 	 * @throws RestFault|PacketAttributesFault
 	 */
-	private function proccessResult(array $result)
+	private function processResult(array $result): void
 	{
-		if ($result->status === 'fault') {
-			if ($result->fault === 'PacketAttributesFault') {
-				throw new PacketAttributesFault($result->detail->attributes->fault);
+		if (($result['status'] ?? '') === 'fault') {
+			if ($result['fault'] === 'PacketAttributesFault') {
+				throw new PacketAttributesFault($result['detail']['attributes']['fault'] ?? 'Unknown error.');
 			}
-			throw new RestFault($result->fault . ': ' . $result->string . json_encode($result->detail));
+			throw new RestFault($result['fault'] . ': ' . ($result['string'] ?? 'Unknown error') . json_encode($result['detail'] ?? ''));
 		}
 	}
 }
