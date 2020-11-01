@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Salamek\Zasilkovna;
 
 
-use Salamek\Zasilkovna\Entity\Branch as BranchEntity;
+use Salamek\Zasilkovna\Entity\IBranch;
+use Salamek\Zasilkovna\Entity\ZasilkovnaBranch;
 use Salamek\Zasilkovna\Model\IBranchStorage;
 
 final class Branch
@@ -13,6 +14,8 @@ final class Branch
 	private IBranchStorage $branchStorage;
 
 	private string $jsonEndpoint;
+
+	private ?string $hydrateToEntity = null;
 
 
 	public function __construct(string $apiKey, IBranchStorage $branchStorage)
@@ -42,25 +45,37 @@ final class Branch
 
 
 	/**
-	 * @return BranchEntity[]
+	 * @return IBranch[]
 	 */
 	public function getBranchList(): array
 	{
 		$return = [];
 		foreach ($this->branchStorage->getBranchList() as $branch) {
-			$return[] = new BranchEntity($branch);
+			$return[] = new ZasilkovnaBranch($branch);
 		}
 
 		return $return;
 	}
 
 
-	public function find(int $id): ?BranchEntity
+	public function find(int $id): ?IBranch
 	{
 		if (($branch = $this->branchStorage->find($id)) === null) {
 			return null;
 		}
 
-		return new BranchEntity($branch);
+		return new ZasilkovnaBranch($branch);
+	}
+
+
+	public function getHydrateToEntity(): string
+	{
+		return $this->hydrateToEntity ?? ZasilkovnaBranch::class;
+	}
+
+
+	public function setHydrateToEntity(?string $hydrateToEntity): void
+	{
+		$this->hydrateToEntity = $hydrateToEntity;
 	}
 }

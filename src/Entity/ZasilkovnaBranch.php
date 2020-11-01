@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Salamek\Zasilkovna\Entity;
 
 
-final class Branch
+final class ZasilkovnaBranch implements IBranch
 {
 	private int $id;
 
