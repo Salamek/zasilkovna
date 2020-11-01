@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Salamek\Zasilkovna;
 
 
+use Salamek\Zasilkovna\Entity\Branch as BranchEntity;
 use Salamek\Zasilkovna\Model\IBranchStorage;
 
 final class Branch
@@ -16,6 +17,9 @@ final class Branch
 
 	public function __construct(string $apiKey, IBranchStorage $branchStorage)
 	{
+		if (trim($apiKey) === '') {
+			throw new \RuntimeException('API key can not be empty.');
+		}
 		$this->branchStorage = $branchStorage;
 		$this->jsonEndpoint = 'https://www.zasilkovna.cz/api/v3/' . $apiKey . '/branch.json';
 		$this->initializeStorage();
@@ -25,13 +29,10 @@ final class Branch
 	public function initializeStorage(bool $force = false): void
 	{
 		if ($force || !$this->branchStorage->isStorageValid()) {
-			$result = file_get_contents($this->jsonEndpoint);
-			if (!$result) {
+			if (!($result = file_get_contents($this->jsonEndpoint))) {
 				throw new \RuntimeException('Failed to open JSON endpoint');
 			}
-
-			$data = \json_decode($result, true);
-			if (!$data || !array_key_exists('data', $data)) {
+			if (!($data = \json_decode($result, true)) || !array_key_exists('data', $data)) {
 				throw new \RuntimeException('Failed to decode JSON');
 			}
 
@@ -40,14 +41,26 @@ final class Branch
 	}
 
 
+	/**
+	 * @return BranchEntity[]
+	 */
 	public function getBranchList(): array
 	{
-		return $this->branchStorage->getBranchList();
+		$return = [];
+		foreach ($this->branchStorage->getBranchList() as $branch) {
+			$return[] = new BranchEntity($branch);
+		}
+
+		return $return;
 	}
 
 
-	public function find(int $id): array
+	public function find(int $id): ?BranchEntity
 	{
-		return $this->branchStorage->find($id);
+		if (($branch = $this->branchStorage->find($id)) === null) {
+			return null;
+		}
+
+		return new BranchEntity($branch);
 	}
 }

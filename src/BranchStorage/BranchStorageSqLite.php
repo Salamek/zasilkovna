@@ -5,32 +5,34 @@ declare(strict_types=1);
 namespace Salamek\Zasilkovna\Model;
 
 
-class BranchStorageSqLite implements IBranchStorage
+/**
+ * @internal
+ */
+final class BranchStorageSqLite implements IBranchStorage
 {
 	private \PDO $database;
 
-	private string $expiry;
+	private string $expiration;
 
 	private string $tableName = 'branch';
 
 
-	public function __construct(?string $databasePath = null, string $expiration = '-24 hours')
+	public function __construct(?string $cachePath = null, string $expiration = '-24 hours')
 	{
-		$this->expiry = $expiration;
-		$this->database = new \PDO('sqlite:/' . ($databasePath ?? sys_get_temp_dir() . '/' . md5(__CLASS__) . '.sqlite'));
+		$this->expiration = $expiration;
+		$this->database = new \PDO('sqlite:/' . ($cachePath ?? sys_get_temp_dir() . '/' . md5(__CLASS__) . '.sqlite'));
 		$this->database->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->createTable();
 	}
 
 
 	/**
-	 * @return mixed
+	 * @return mixed[][]
 	 */
 	public function getBranchList(): array
 	{
-		$query = 'SELECT `data` FROM ' . $this->tableName;
 		$return = [];
-		foreach ($this->database->query($query) as $row) {
+		foreach ($this->database->query('SELECT `data` FROM ' . $this->tableName) as $row) {
 			$return[] = json_decode($row['data'], true);
 		}
 
@@ -38,6 +40,9 @@ class BranchStorageSqLite implements IBranchStorage
 	}
 
 
+	/**
+	 * @return mixed[]
+	 */
 	public function find(int $id): ?array
 	{
 		$statement = $this->database->prepare('SELECT `data` FROM ' . $this->tableName . ' WHERE id = ?');
@@ -52,7 +57,7 @@ class BranchStorageSqLite implements IBranchStorage
 
 
 	/**
-	 * @param $branchList
+	 * @param mixed[] $branchList
 	 */
 	public function setBranchList(array $branchList): void
 	{
@@ -72,15 +77,14 @@ class BranchStorageSqLite implements IBranchStorage
 	{
 		$statement = $this->database->prepare('SELECT `created` FROM ' . $this->tableName . ' ORDER BY date(`created`) DESC LIMIT 1');
 		$statement->execute();
-		$found = $statement->fetch();
 
-		return $found && (new \DateTime($found['created'])) > (new \DateTime)->modify($this->expiry);
+		return ($found = $statement->fetch()) && (new \DateTime($found['created'])) > (new \DateTime)->modify($this->expiration);
 	}
 
 
 	private function createTable(): void
 	{
-		$statement = $this->database->prepare('CREATE TABLE IF NOT EXISTS ' . $this->tableName . ' (`id` INTEGER, `data` TEXT, `created` DATETIME)');
-		$statement->execute();
+		$this->database->prepare('CREATE TABLE IF NOT EXISTS ' . $this->tableName . ' (`id` INTEGER, `data` TEXT, `created` DATETIME)')
+			->execute();
 	}
 }

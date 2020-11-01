@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Salamek\Zasilkovna\Model;
 
 
+/**
+ * @internal
+ */
 final class BranchStorageMemory implements IBranchStorage
 {
-	private array $branchList;
+	private ?array $branchList = null;
 
 
 	public function __construct()
@@ -16,8 +19,15 @@ final class BranchStorageMemory implements IBranchStorage
 	}
 
 
+	/**
+	 * @return mixed[][]
+	 */
 	public function getBranchList(): array
 	{
+		if ($this->branchList === null) {
+			throw new \RuntimeException('Branch list is empty.');
+		}
+
 		return $this->branchList;
 	}
 
@@ -28,9 +38,12 @@ final class BranchStorageMemory implements IBranchStorage
 	}
 
 
+	/**
+	 * @return mixed[]
+	 */
 	public function find(int $id): ?array
 	{
-		foreach ($this->branchList as $item) {
+		foreach ($this->branchList ?? [] as $item) {
 			if ($item['id'] === $id) {
 				return $item;
 			}
@@ -42,6 +55,6 @@ final class BranchStorageMemory implements IBranchStorage
 
 	public function isStorageValid(): bool
 	{
-		return !empty($this->branchList);
+		return $this->branchList !== null;
 	}
 }

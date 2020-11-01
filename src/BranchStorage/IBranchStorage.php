@@ -8,12 +8,12 @@ namespace Salamek\Zasilkovna\Model;
 interface IBranchStorage
 {
 	/**
-	 * @return array
+	 * @return mixed[][]
 	 */
 	public function getBranchList(): array;
 
 	/**
-	 * @return array
+	 * @return mixed[]
 	 */
 	public function find(int $id): ?array;
 

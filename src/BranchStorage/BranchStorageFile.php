@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Model;
 
+/**
+ * @internal
+ */
 final class BranchStorageFile implements IBranchStorage
 {
-	private array $branchList;
+	private ?array $branchList = null;
 
 	private string $filePath;
-
-	private bool $storageValid = false;
 
 
 	public function __construct(?string $filePath = null)
@@ -18,15 +19,19 @@ final class BranchStorageFile implements IBranchStorage
 		$this->filePath = $filePath ?? sys_get_temp_dir() . '/' . md5(__CLASS__);
 		if (\is_file($this->filePath)) {
 			$this->branchList = \json_decode(file_get_contents($this->filePath), true);
-			if (!empty($this->branchList)) {
-				$this->storageValid = true;
-			}
 		}
 	}
 
 
+	/**
+	 * @return mixed[][]
+	 */
 	public function getBranchList(): array
 	{
+		if ($this->branchList === null) {
+			throw new \RuntimeException('Branch list is empty.');
+		}
+
 		return $this->branchList;
 	}
 
@@ -35,13 +40,15 @@ final class BranchStorageFile implements IBranchStorage
 	{
 		$this->branchList = $branchList;
 		file_put_contents($this->filePath, json_encode($branchList));
-		$this->storageValid = true;
 	}
 
 
+	/**
+	 * @return mixed[]
+	 */
 	public function find(int $id): ?array
 	{
-		foreach ($this->branchList as $item) {
+		foreach ($this->branchList ?? [] as $item) {
 			if ($item['id'] === $id) {
 				return $item;
 			}
@@ -53,6 +60,6 @@ final class BranchStorageFile implements IBranchStorage
 
 	public function isStorageValid(): bool
 	{
-		return $this->storageValid;
+		return $this->branchList !== null;
 	}
 }
