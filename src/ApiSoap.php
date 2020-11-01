@@ -135,6 +135,7 @@ final class ApiSoap implements IApi
 
 
 	/**
+	 * @param int[] $packetIds
 	 * @return mixed
 	 */
 	public function packetsLabelsPdf(array $packetIds, string $format, int $offset)

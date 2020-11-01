@@ -271,6 +271,9 @@ final class Label
 	}
 
 
+	/**
+	 * @return string[]
+	 */
 	private function parsePackageNumber(string $packageNumber): array
 	{
 		if (strpos($packageNumber, 'Z') !== 0) {
