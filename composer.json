@@ -23,6 +23,7 @@
 	],
 	"require": {
 		"php": ">=7.4.0",
+		"tecnickcom/tcpdf": "^6.3",
 		"spatie/array-to-xml": "^2.15"
 	},
 	"require-dev": {
