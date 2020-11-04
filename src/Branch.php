@@ -93,9 +93,9 @@ final class Branch
 				];
 			}
 		}
-		usort($candidates, fn(array $a, array $b): int => $a['distance'] > $b['distance'] ? 1 : -1);
+		usort($candidates, fn (array $a, array $b): int => $a['distance'] > $b['distance'] ? 1 : -1);
 
-		return array_slice(array_map(fn(array $item) => $item['branch'], $candidates), 0, $limit);
+		return array_slice(array_map(fn (array $item) => $item['branch'], $candidates), 0, $limit);
 	}
 
 
