@@ -190,6 +190,18 @@ final class ZasilkovnaBranch implements IBranch
 	}
 
 
+	public function getDistanceFrom(float $latitude, float $longitude): float
+	{
+		static $greatCircleRadius = 6372.795;
+
+		return acos(
+				cos(deg2rad($this->latitude)) * cos(deg2rad($this->longitude)) * cos(deg2rad($latitude)) * cos(deg2rad($longitude))
+				+ cos(deg2rad($this->latitude)) * sin(deg2rad($this->longitude)) * cos(deg2rad($latitude)) * sin(deg2rad($longitude))
+				+ sin(deg2rad($this->latitude)) * sin(deg2rad($latitude))
+			) * $greatCircleRadius;
+	}
+
+
 	public function getUrl(): string
 	{
 		return $this->url;
