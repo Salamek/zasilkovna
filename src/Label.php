@@ -29,7 +29,7 @@ final class Label
 	 * @param PacketAttributes[] $packetAttributes
 	 * @throws WrongDataException
 	 */
-	public function generateLabels(array $packetAttributes, int $decomposition = LabelDecomposition::FULL): string
+	public function generateLabels(array $packetAttributes, int $decomposition = LabelDecomposition::FULL, ?int $position = null): string
 	{
 		if (!in_array($decomposition, LabelDecomposition::$list, true)) {
 			throw new WrongDataException('Unknown $decomposition, because only "' . implode('", "', LabelDecomposition::$list) . '" are allowed');
@@ -52,7 +52,7 @@ final class Label
 		$pdf->setPrintHeader(false);
 		$pdf->setPrintFooter(false);
 
-		$quarterPosition = LabelPosition::TOP_LEFT;
+		$quarterPosition = $position ?? LabelPosition::TOP_LEFT;
 		/** @var PacketAttributes $packetAttribute */
 		foreach ($packetAttributes as $packetAttribute) {
 			switch ($decomposition) {
@@ -65,8 +65,9 @@ final class Label
 					if ($quarterPosition > LabelPosition::BOTTOM_RIGHT) {
 						$quarterPosition = LabelPosition::TOP_LEFT;
 					}
-					if ($quarterPosition == LabelPosition::TOP_LEFT) {
+					if ($position || $quarterPosition === LabelPosition::TOP_LEFT) {
 						$pdf->AddPage();
+						$position = null;
 					}
 
 					$pdf = $this->generateLabelQuarter($pdf, $packetAttribute, $quarterPosition);
@@ -82,6 +83,8 @@ final class Label
 	public function generateLabelFull(TCPDF $pdf, PacketAttributes $packetAttributes): TCPDF
 	{
 		$returnRouting = $this->api->senderGetReturnRouting($packetAttributes->getEshop());
+		bd ($returnRouting);
+
 		$branch = $this->branch->find($packetAttributes->getAddressId());
 		if ($branch === null) {
 			throw new \InvalidArgumentException('Branch "' . $packetAttributes->getAddressId() . '" does not exist.');
@@ -100,8 +103,8 @@ final class Label
 		$pdf->SetFont($pdf->getFontFamily(), 'B', 31);
 		$pdf->Text($contactInfoX + 20, $contactInfoY + 12, $packetAttributes->getNumber());
 		$pdf->SetFont($pdf->getFontFamily(), '', 31);
-		$pdf->Text($contactInfoX, $contactInfoY + 27, $returnRouting->routingSegment[0]);
-		$pdf->Text($contactInfoX, $contactInfoY + 39, $returnRouting->routingSegment[1]);
+		$pdf->Text($contactInfoX, $contactInfoY + 27, $returnRouting['routingSegment'][0]);
+		$pdf->Text($contactInfoX, $contactInfoY + 39, $returnRouting['routingSegment'][1]);
 
 		// Sender text
 		$pdf->StartTransform();
@@ -221,8 +224,8 @@ final class Label
 		$pdf->SetFont($pdf->getFontFamily(), 'B', 16);
 		$pdf->Text(22 + $xPositionOffset, 10 + $yPositionOffset, $packetAttributes->getNumber());
 		$pdf->SetFont($pdf->getFontFamily(), '', 16);
-		$pdf->Text(12 + $xPositionOffset, 20 + $yPositionOffset, $returnRouting->routingSegment[0]);
-		$pdf->Text(12 + $xPositionOffset, 27 + $yPositionOffset, $returnRouting->routingSegment[1]);
+		$pdf->Text(12 + $xPositionOffset, 20 + $yPositionOffset, $returnRouting['routingSegment'][0]);
+		$pdf->Text(12 + $xPositionOffset, 27 + $yPositionOffset, $returnRouting['routingSegment'][1]);
 
 		// Barcode
 		$x = 65 + $xPositionOffset;
