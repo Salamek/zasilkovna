@@ -41,7 +41,7 @@ final class PacketAttributes implements IModel
 
 	private ?string $city;
 
-	private ?string $zip;
+	private ?int $zip;
 
 	private ?int $carrierPickupPoint;
 
@@ -52,31 +52,33 @@ final class PacketAttributes implements IModel
 	private ?string $customerBarcode;
 
 
-	public function __construct(string $number, string $name, string $surname, float $value, int $addressId, ?int $id = null, ?string $company = null, ?string $email = null, ?string $phone = null, ?string $currency = null, ?float $cod = null, ?float $weight = null, ?string $eshop = null, bool $adultContent = null, ?string $street = null, ?string $houseNumber = null, ?string $city = null, ?string $zip = null, ?int $carrierPickupPoint = null, ?string $carrierService = null, ?DispatchOrder $dispatchOrder = null, ?string $customerBarcode = null)
+	/**
+	 * @param string|int|null $zip
+	 */
+	public function __construct(string $number, string $name, string $surname, float $value, int $addressId, ?int $id = null, ?string $company = null, ?string $email = null, ?string $phone = null, ?string $currency = null, ?float $cod = null, ?float $weight = null, ?string $eshop = null, bool $adultContent = null, ?string $street = null, ?string $houseNumber = null, ?string $city = null, $zip = null, ?int $carrierPickupPoint = null, ?string $carrierService = null, ?DispatchOrder $dispatchOrder = null, ?string $customerBarcode = null)
 	{
-		$this->number = $number;
-		$this->name = $name;
-		$this->surname = $surname;
-		$this->addressId = $addressId;
-
-		$this->id = $id;
-		$this->company = $company;
-		$this->email = $email;
-		$this->phone = $phone;
-		$this->currency = $currency;
-		$this->cod = $cod;
-		$this->value = $value;
-		$this->weight = $weight;
-		$this->eshop = $eshop;
-		$this->adultContent = $adultContent;
-		$this->street = $street;
-		$this->houseNumber = $houseNumber;
-		$this->city = $city;
-		$this->zip = $zip;
-		$this->carrierPickupPoint = $carrierPickupPoint;
-		$this->carrierService = $carrierService;
-		$this->dispatchOrder = $dispatchOrder;
-		$this->customerBarcode = $customerBarcode;
+		$this->setNumber($number);
+		$this->setName($name);
+		$this->setSurname($surname);
+		$this->setValue($value);
+		$this->setAddressId($addressId);
+		$this->setId($id);
+		$this->setCompany($company);
+		$this->setEmail($email);
+		$this->setPhone($phone);
+		$this->setCurrency($currency);
+		$this->setCod($cod);
+		$this->setWeight($weight);
+		$this->setEshop($eshop);
+		$this->setAdultContent($adultContent);
+		$this->setStreet($street);
+		$this->setHouseNumber($houseNumber);
+		$this->setCity($city);
+		$this->setZip($zip);
+		$this->setCarrierPickupPoint($carrierPickupPoint);
+		$this->setCarrierService($carrierService);
+		$this->setDispatchOrder($dispatchOrder);
+		$this->setCustomerBarcode($customerBarcode);
 	}
 
 
@@ -172,6 +174,28 @@ final class PacketAttributes implements IModel
 
 	public function setEmail(?string $email): void
 	{
+		if ($email === null) {
+			$this->email = null;
+
+			return;
+		}
+		$isEmail = static function (string $value): bool {
+			$atom = "[-a-z0-9!#$%&'*+/=?^_`{|}~]"; // RFC 5322 unquoted characters in local-part
+			$alpha = "a-z\x80-\xFF"; // superset of IDN
+
+			return (bool) preg_match(<<<XX
+		(^
+			("([ !#-[\\]-~]*|\\\\[ -~])+"|$atom+(\\.$atom+)*)  # quoted or unquoted
+			@
+			([0-9$alpha]([-0-9$alpha]{0,61}[0-9$alpha])?\\.)+  # domain - RFC 1034
+			[$alpha]([-0-9$alpha]{0,17}[$alpha])?              # top domain
+		$)Dix
+XX, $value);
+		};
+
+		if ($isEmail($email) === false) {
+			throw new \InvalidArgumentException('Customer e-mail "' . $email . '" is not valid.');
+		}
 		$this->email = $email;
 	}
 
@@ -182,8 +206,33 @@ final class PacketAttributes implements IModel
 	}
 
 
-	public function setPhone(?string $phone): void
+	/**
+	 * Normalize phone to basic format if pattern match.
+	 *
+	 * @param int $region use this prefix when number prefix does not exist
+	 */
+	public function setPhone(?string $phone, int $region = 420): void
 	{
+		if ($phone === null) {
+			$this->phone = null;
+
+			return;
+		}
+
+		$phone = (string) preg_replace('/\s+/', '', $phone); // remove spaces
+		if (preg_match('/^([\+0-9]+)/', $phone, $trimUnexpected)) { // remove user notice and unexpected characters
+			$phone = (string) $trimUnexpected[1];
+		}
+		if (preg_match('/^\+(4\d{2})(\d{3})(\d{3})(\d{3})$/', $phone, $prefixParser)) { // +420 xxx xxx xxx
+			$phone = '+' . $prefixParser[1] . ' ' . $prefixParser[2] . ' ' . $prefixParser[3] . ' ' . $prefixParser[4];
+		} elseif (preg_match('/^\+(4\d{2})(\d+)$/', $phone, $prefixSimpleParser)) { // +420 xxx
+			$phone = '+' . $prefixSimpleParser[1] . ' ' . $prefixSimpleParser[2];
+		} elseif (preg_match('/^(\d{3})(\d{3})(\d{3})$/', $phone, $regularParser)) { // numbers only
+			$phone = '+' . $region . ' ' . $regularParser[1] . ' ' . $regularParser[2] . ' ' . $regularParser[3];
+		} else {
+			throw new \InvalidArgumentException('Phone number "' . $phone . '" for region "' . $region . '" does not exist.');
+		}
+
 		$this->phone = $phone;
 	}
 
@@ -286,13 +335,20 @@ final class PacketAttributes implements IModel
 
 	public function getZip(): ?string
 	{
-		return $this->zip;
+		return $this->zip === null ? null : (string) $this->zip;
 	}
 
 
-	public function setZip(?string $zip): void
+	/**
+	 * @param string|int|null $zip
+	 */
+	public function setZip($zip): void
 	{
-		$this->zip = $zip;
+		if ($zip === null) {
+			$this->zip = null;
+		} else {
+			$this->zip = (int) $zip;
+		}
 	}
 
 
