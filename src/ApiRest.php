@@ -19,8 +19,11 @@ final class ApiRest implements IApi
 
 	public function __construct(string $apiKey)
 	{
-		if (trim($apiKey) === '') {
-			throw new \RuntimeException('API key can not be empty.');
+		if (($apiKey = trim($apiKey)) === '') {
+			throw new \InvalidArgumentException('API key can not be empty.');
+		}
+		if (strlen($apiKey) < 5) {
+			throw new \InvalidArgumentException('API key "' . $apiKey . '" is too short.');
 		}
 		$this->apiKey = $apiKey;
 	}
