@@ -223,7 +223,7 @@ final class ApiRest implements IApi
 
 
 	/**
-	 * @param mixed [] $result
+	 * @param mixed[] $result
 	 * @throws RestFault|PacketAttributesFault
 	 */
 	private function processResult(array $result): void
@@ -232,7 +232,10 @@ final class ApiRest implements IApi
 			if ($result['fault'] === 'PacketAttributesFault') {
 				throw new PacketAttributesFault($result['detail']['attributes']['fault'] ?? 'Unknown error.');
 			}
-			throw new RestFault($result['fault'] . ': ' . ($result['string'] ?? 'Unknown error') . json_encode($result['detail'] ?? ''));
+			throw new RestFault(
+				$result['fault'] . ': ' . ($result['string'] ?? 'Unknown error')
+				. (isset($result['detail']) && $result['detail'] ? "\n" . 'Details: ' . json_encode($result['detail']) : '')
+			);
 		}
 	}
 }
