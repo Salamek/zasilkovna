@@ -17,7 +17,8 @@ final class PacketAttributesFault extends \Exception
 	public function __construct($fails)
 	{
 		foreach (((array) $fails) as $fail) {
-			$this->fails[$fail->name] = (string) $fail->fault;
+			$fail = (array) $fail;
+			$this->fails[$fail['name'] ?? '???'] = (string) ($fail['fault'] ?? '???');
 		}
 		parent::__construct((string) $this);
 	}
@@ -27,7 +28,7 @@ final class PacketAttributesFault extends \Exception
 	{
 		$return = '';
 		foreach ($this->fails as $name => $fail) {
-			$return .= $name . ': ' . $fail . ', ';
+			$return .= $name . ': ' . $fail . "\n";
 		}
 
 		return trim($return, ', ');
