@@ -74,7 +74,11 @@ final class PacketAttributes implements IModel
 		$this->setStreet($street);
 		$this->setHouseNumber($houseNumber);
 		$this->setCity($city);
-		$this->setZip($zip);
+		if (\is_string($zip)) {
+			$this->setZipString($zip);
+		} else {
+			$this->setZip($zip);
+		}
 		$this->setCarrierPickupPoint($carrierPickupPoint);
 		$this->setCarrierService($carrierService);
 		$this->setDispatchOrder($dispatchOrder);
@@ -335,20 +339,35 @@ XX, $value);
 
 	public function getZip(): ?string
 	{
-		return $this->zip === null ? null : (string) $this->zip;
+		if ($this->zip === null) {
+			return null;
+		}
+
+		return (string) preg_replace('/^(\d{3})(\d{2})$/', '$1 $2', $this->zip);
 	}
 
 
-	/**
-	 * @param string|int|null $zip
-	 */
-	public function setZip($zip): void
+	public function setZip(?int $zip): void
 	{
 		if ($zip === null) {
 			$this->zip = null;
-		} else {
-			$this->zip = (int) $zip;
+
+			return;
 		}
+		if ($zip < 10000) {
+			throw new \InvalidArgumentException('Zip "' . $zip . '" is too small.');
+		}
+		if ($zip > 99999) {
+			throw new \InvalidArgumentException('Zip "' . $zip . '" is too big.');
+		}
+
+		$this->zip = $zip;
+	}
+
+
+	public function setZipString(string $zip): void
+	{
+		$this->setZip((int) preg_replace('/\D/', '', $zip));
 	}
 
 
