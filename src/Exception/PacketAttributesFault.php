@@ -16,6 +16,10 @@ final class PacketAttributesFault extends \Exception
 	 */
 	public function __construct($fails)
 	{
+		$fails = (array) $fails;
+		if (\count($fails) > 0 && isset($fails[0]) === false) {
+			$fails = [$fails];
+		}
 		foreach (((array) $fails) as $fail) {
 			$fail = (array) $fail;
 			$this->fails[$fail['name'] ?? '???'] = (string) ($fail['fault'] ?? '???');
