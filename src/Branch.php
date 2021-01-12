@@ -17,6 +17,8 @@ final class Branch
 
 	private ?string $hydrateToEntity = null;
 
+	private bool $initialized = false;
+
 
 	public function __construct(string $apiKey, IBranchStorage $branchStorage)
 	{
@@ -25,12 +27,14 @@ final class Branch
 		}
 		$this->branchStorage = $branchStorage;
 		$this->jsonEndpoint = 'https://www.zasilkovna.cz/api/v3/' . $apiKey . '/branch.json';
-		$this->initializeStorage();
 	}
 
 
 	public function initializeStorage(bool $force = false): void
 	{
+		if ($this->initialized === true && $force === false) {
+			return;
+		}
 		if ($force || !$this->branchStorage->isStorageValid()) {
 			if (!($result = file_get_contents($this->jsonEndpoint))) {
 				throw new \RuntimeException('Failed to open JSON endpoint');
@@ -41,6 +45,7 @@ final class Branch
 
 			$this->branchStorage->setBranchList($data['data']);
 		}
+		$this->initialized = true;
 	}
 
 
@@ -49,6 +54,7 @@ final class Branch
 	 */
 	public function getBranchList(): array
 	{
+		$this->initializeStorage();
 		$entity = $this->getHydrateToEntity();
 		$return = [];
 		foreach ($this->branchStorage->getBranchList() as $branch) {
@@ -61,6 +67,7 @@ final class Branch
 
 	public function find(int $id): ?IBranch
 	{
+		$this->initializeStorage();
 		if (($branch = $this->branchStorage->find($id)) === null) {
 			return null;
 		}
@@ -82,6 +89,7 @@ final class Branch
 	 */
 	public function findNearest(float $latitude, float $longitude, float $kilometersAround = 5, int $limit = 100): array
 	{
+		$this->initializeStorage();
 		$candidates = [];
 		$candidateArea = ($kilometersAround > 100 ? 100 : $kilometersAround) * 0.01;
 		foreach ($this->getBranchList() as $candidateBranch) {
