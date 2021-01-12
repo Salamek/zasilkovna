@@ -66,6 +66,9 @@ final class ZasilkovnaBranch implements IBranch
 	 */
 	public function __construct(array $data)
 	{
+		$toString = static function ($data): string {
+			return \is_array($data) ? \implode(', ', $data) : (string) $data;
+		};
 		$this->id = (int) $data['id'];
 		$this->name = $data['name'];
 		$this->nameStreet = $data['nameStreet'];
@@ -87,9 +90,9 @@ final class ZasilkovnaBranch implements IBranch
 		$this->packetConsignment = $data['packetConsignment'] === '1';
 		$this->maxWeight = (int) $data['maxWeight'];
 		$this->region = $data['region'];
-		$this->district = $data['district'];
-		$this->labelRouting = $data['labelRouting'];
-		$this->labelName = $data['labelName'];
+		$this->district = $toString($data['district']);
+		$this->labelRouting = $toString($data['labelRouting']);
+		$this->labelName = $toString($data['labelName']);
 		$this->openingHours = new BranchOpeningHours((array) ($data['openingHours'] ?? []));
 
 		$photos = [];
