@@ -25,9 +25,12 @@ final class BranchOpeningHours
 	 */
 	public function __construct(array $data)
 	{
-		$this->compactShort = (string) ($data['compactShort'] ?? '');
-		$this->compactLong = (string) ($data['compactLong'] ?? '');
-		$this->tableLong = (string) ($data['tableLong'] ?? '');
+		$toString = static function ($data): string {
+			return \is_array($data) ? \implode(', ', $data) : (string) $data;
+		};
+		$this->compactShort = $toString($data['compactShort'] ?? '');
+		$this->compactLong = $toString($data['compactLong'] ?? '');
+		$this->tableLong = $toString($data['tableLong'] ?? '');
 		$this->regular = (array) ($data['regular'] ?? []);
 		$this->exceptions = (array) ($data['exceptions'] ?? []);
 	}
