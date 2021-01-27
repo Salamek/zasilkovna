@@ -230,7 +230,7 @@ final class ApiRest implements IApi
 	{
 		if (($result['status'] ?? '') === 'fault') {
 			if ($result['fault'] === 'PacketAttributesFault') {
-				throw new PacketAttributesFault($result['detail']['attributes']['fault'] ?? 'Unknown error.');
+				throw new PacketAttributesFault($result['detail']['attributes']['fault']);
 			}
 			throw new RestFault(
 				$result['fault'] . ': ' . ($result['string'] ?? 'Unknown error')

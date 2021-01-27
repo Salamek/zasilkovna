@@ -10,26 +10,23 @@ final class PacketAttributesFault extends \Exception
 	/** @var string[] (name => fail) */
 	private array $fails = [];
 
-
-	/**
-	 * @param object|object[] $fails
-	 */
-	public function __construct($fails)
+	public function __construct(array $fails)
 	{
-		foreach (((array) $fails) as $fail) {
-			$this->fails[$fail->name] = (string) $fail->fault;
+		if($fails['name'] ?? true == false) {
+			$this->fails = [$fails]; // One fail
+		} else {
+			$this->fails = $fails; // Many fails
 		}
+
 		parent::__construct((string) $this);
 	}
-
 
 	public function __toString(): string
 	{
 		$return = '';
-		foreach ($this->fails as $name => $fail) {
-			$return .= $name . ': ' . $fail . ', ';
+		foreach ($this->fails as $fail)	{
+			$return .= $fail['name'] . ': ' . $fail['fault'] . ', ';
 		}
-
 		return trim($return, ', ');
 	}
 }
