@@ -7,6 +7,7 @@ namespace Salamek\Zasilkovna;
 
 use Salamek\Zasilkovna\Entity\IBranch;
 use Salamek\Zasilkovna\Entity\ZasilkovnaBranch;
+use Salamek\Zasilkovna\Model\BranchStorageFile;
 use Salamek\Zasilkovna\Model\IBranchStorage;
 
 final class Branch
@@ -18,12 +19,12 @@ final class Branch
 	private ?string $hydrateToEntity = null;
 
 
-	public function __construct(string $apiKey, IBranchStorage $branchStorage)
+	public function __construct(string $apiKey, ?IBranchStorage $branchStorage = null)
 	{
 		if (trim($apiKey) === '') {
 			throw new \RuntimeException('API key can not be empty.');
 		}
-		$this->branchStorage = $branchStorage;
+		$this->branchStorage = $branchStorage ?? new BranchStorageFile;
 		$this->jsonEndpoint = 'https://www.zasilkovna.cz/api/v3/' . $apiKey . '/branch.json';
 		$this->initializeStorage();
 	}
