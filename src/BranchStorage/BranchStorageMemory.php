@@ -45,7 +45,7 @@ final class BranchStorageMemory implements IBranchStorage
 	public function find(int $id): ?array
 	{
 		foreach ($this->branchList ?? [] as $item) {
-			if ($item['id'] === $id) {
+			if (((int) $item['id']) === $id) {
 				return $item;
 			}
 		}
