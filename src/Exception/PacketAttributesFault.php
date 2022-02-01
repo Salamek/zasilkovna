@@ -13,19 +13,19 @@ final class PacketAttributesFault extends \Exception
 	public function __construct(mixed $fails)
 	{
 		// Normalize schema
-		if(isset($fails['name'])) {
+		if (isset($fails['name'])) {
 			$this->fails = [$fails]; // One fail to array
 		} else {
 			$this->fails = $fails; // Many fails keep same
 		}
 
-		parent::__construct((string) $this);
+		parent::__construct((string)$this);
 	}
 
 	public function __toString(): string
 	{
 		$return = '';
-		foreach ($this->fails as $fail)	{
+		foreach ($this->fails as $fail) {
 			$return .= $fail['name'] . ': ' . $fail['fault'] . ', ';
 		}
 		return trim($return, ', ');
