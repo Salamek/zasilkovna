@@ -7,15 +7,16 @@ namespace Salamek\Zasilkovna\Exception;
 
 final class PacketAttributesFault extends \Exception
 {
-	/** @var string[] (name => fail) */
+	/** @var mixed[] (name => fail) */
 	private array $fails = [];
 
-	public function __construct(array $fails)
+	public function __construct(mixed $fails)
 	{
-		if($fails['name'] ?? true == false) {
-			$this->fails = [$fails]; // One fail
+		// Normalize schema
+		if(isset($fails['name'])) {
+			$this->fails = [$fails]; // One fail to array
 		} else {
-			$this->fails = $fails; // Many fails
+			$this->fails = $fails; // Many fails keep same
 		}
 
 		parent::__construct((string) $this);
