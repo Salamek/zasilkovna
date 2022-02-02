@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Model;
 
+use Salamek\Zasilkovna\Tool;
+
 final class PacketAttributes implements IModel
 {
     private string $number;
@@ -75,29 +77,28 @@ final class PacketAttributes implements IModel
         ?DispatchOrder $dispatchOrder = null,
         ?string $customerBarcode = null
     ) {
-        $this->number = $number;
-        $this->name = $name;
-        $this->surname = $surname;
-        $this->addressId = $addressId;
-
-        $this->id = $id;
-        $this->company = $company;
-        $this->email = $email;
-        $this->phone = $phone;
-        $this->currency = $currency;
-        $this->cod = $cod;
-        $this->value = $value;
-        $this->weight = $weight;
-        $this->eshop = $eshop;
-        $this->adultContent = $adultContent;
-        $this->street = $street;
-        $this->houseNumber = $houseNumber;
-        $this->city = $city;
-        $this->zip = $zip;
-        $this->carrierPickupPoint = $carrierPickupPoint;
-        $this->carrierService = $carrierService;
-        $this->dispatchOrder = $dispatchOrder;
-        $this->customerBarcode = $customerBarcode;
+        $this->setNumber($number);
+        $this->setName($name);
+        $this->setSurname($surname);
+        $this->setValue($value);
+        $this->setAddressId($addressId);
+        $this->setId($id);
+        $this->setCompany($company);
+        $this->setEmail($email);
+        $this->setPhone($phone);
+        $this->setCurrency($currency);
+        $this->setCod($cod);
+        $this->setWeight($weight);
+        $this->setEshop($eshop);
+        $this->setAdultContent($adultContent);
+        $this->setStreet($street);
+        $this->setHouseNumber($houseNumber);
+        $this->setCity($city);
+        $this->setZip($zip);
+        $this->setCarrierPickupPoint($carrierPickupPoint);
+        $this->setCarrierService($carrierService);
+        $this->setDispatchOrder($dispatchOrder);
+        $this->setCustomerBarcode($customerBarcode);
     }
 
 
@@ -193,6 +194,10 @@ final class PacketAttributes implements IModel
 
     public function setEmail(?string $email): void
     {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $message = sprintf('Customer e-mail "%s" is not valid.', $email);
+            throw new \InvalidArgumentException($message);
+        }
         $this->email = $email;
     }
 
@@ -203,8 +208,11 @@ final class PacketAttributes implements IModel
     }
 
 
-    public function setPhone(?string $phone): void
+    public function setPhone(?string $phone, int $region = 420, bool $normalize = true): void
     {
+        if ($phone && $normalize) {
+            $phone = Tool::normalizePhoneNumber($phone, $region);
+        }
         $this->phone = $phone;
     }
 
