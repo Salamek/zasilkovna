@@ -65,11 +65,12 @@ interface IApi
      * @param string $packetId
      * @param string $format
      * @param int $offset
+     * @return string
      */
-    public function packetLabelPdf(string $packetId, string $format, int $offset);
+    public function packetLabelPdf(string $packetId, string $format, int $offset): string;
 
     /**
-     * @param int[] $packetIds
+     * @param string[] $packetIds
      * @return mixed
      */
     public function packetsLabelsPdf(array $packetIds, string $format, int $offset);

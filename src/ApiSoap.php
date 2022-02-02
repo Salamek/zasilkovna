@@ -133,19 +133,22 @@ final class ApiSoap implements IApi
      * @param string $packetId
      * @param string $format
      * @param int $offset
-     * @return type
+     * @return string
      */
-    public function packetLabelPdf(string $packetId, string $format, int $offset)
+    public function packetLabelPdf(string $packetId, string $format = 'A7 on A4', int $offset = 0): string
     {
         return $this->soap->packetLabelPdf($this->apiKey, $packetId, $format, $offset);
     }
 
 
     /**
+     *
      * @param string[] $packetIds
+     * @param string $format
+     * @param int $offset
      * @return mixed
      */
-    public function packetsLabelsPdf(array $packetIds, string $format, int $offset)
+    public function packetsLabelsPdf(array $packetIds, string $format = 'A7 on A4', int $offset = 0)
     {
         return $this->soap->packetsLabelsPdf($this->apiKey, $packetIds, $format, $offset);
     }
