@@ -5,3 +5,4 @@ includes:
 parameters:
 	ignoreErrors:
 		- '#Call to an undefined method SoapClient::.+\(\).#'
+		- '#method TCPDF::.+\(\).#'
