@@ -16,7 +16,7 @@ final class ApiRest implements IApi
     private string $apiKey;
 
     /**
-     * 
+     *
      * @param string $apiKey
      * @throws \InvalidArgumentException
      */
@@ -34,7 +34,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param PacketAttributes $attributes
      * @return iterable<mixed>
      */
@@ -45,7 +45,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param ClaimAttributes $attributes
      * @return iterable<mixed>
      */
@@ -56,7 +56,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param PacketAttributes $attributes
      * @return iterable<mixed>
      */
@@ -67,7 +67,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param ClaimAttributes $attributes
      * @return iterable<mixed>
      */
@@ -78,7 +78,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param int $packetId
      * @param string $customBarcode
      * @return iterable<mixed>
@@ -90,7 +90,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param int $packetId
      * @return iterable<mixed>
      */
@@ -101,7 +101,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param int $packetId
      * @return iterable<mixed>
      */
@@ -112,7 +112,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param int $packetId
      * @return iterable<mixed>
      */
@@ -123,7 +123,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param int $packetId
      * @param \DateTimeInterface $date
      * @return iterable<mixed>
@@ -135,7 +135,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param string $barcode
      * @return string
      */
@@ -146,7 +146,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param int $packetId
      * @param string $format
      * @param int $offset
@@ -169,7 +169,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * 
+     *
      * @param int $packetId
      * @return string
      */
