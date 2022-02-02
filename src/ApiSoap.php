@@ -129,7 +129,7 @@ final class ApiSoap implements IApi
 
 
     /**
-     * 
+     *
      * @param string $packetId
      * @param string $format
      * @param int $offset

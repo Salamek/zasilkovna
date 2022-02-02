@@ -61,7 +61,7 @@ interface IApi
     public function barcodePng(string $barcode);
 
     /**
-     * 
+     *
      * @param string $packetId
      * @param string $format
      * @param int $offset
