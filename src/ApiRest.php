@@ -79,11 +79,11 @@ final class ApiRest implements IApi
 
     /**
      *
-     * @param int $packetId
+     * @param string $packetId
      * @param string $customBarcode
      * @return iterable<mixed>
      */
-    public function createShipment(int $packetId, string $customBarcode): iterable
+    public function createShipment(string $packetId, string $customBarcode): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'customBarcode' => $customBarcode]);
     }
@@ -91,10 +91,10 @@ final class ApiRest implements IApi
 
     /**
      *
-     * @param int $packetId
+     * @param string $packetId
      * @return iterable<mixed>
      */
-    public function packetStatus(int $packetId): iterable
+    public function packetStatus(string $packetId): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
@@ -102,10 +102,10 @@ final class ApiRest implements IApi
 
     /**
      *
-     * @param int $packetId
+     * @param string $packetId
      * @return iterable<mixed>
      */
-    public function packetTracking(int $packetId): iterable
+    public function packetTracking(string $packetId): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
@@ -113,10 +113,10 @@ final class ApiRest implements IApi
 
     /**
      *
-     * @param int $packetId
+     * @param string $packetId
      * @return iterable<mixed>
      */
-    public function packetGetStoredUntil(int $packetId): iterable
+    public function packetGetStoredUntil(string $packetId): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
@@ -124,11 +124,11 @@ final class ApiRest implements IApi
 
     /**
      *
-     * @param int $packetId
+     * @param string $packetId
      * @param \DateTimeInterface $date
      * @return iterable<mixed>
      */
-    public function packetSetStoredUntil(int $packetId, \DateTimeInterface $date): iterable
+    public function packetSetStoredUntil(string $packetId, \DateTimeInterface $date): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'date' => $date->format('Y-m-d H:i:s')]);
     }
@@ -147,7 +147,7 @@ final class ApiRest implements IApi
 
     /**
      *
-     * @param int $packetId
+     * @param string $packetId
      * @param string $format
      * @param int $offset
      * @return string
@@ -159,7 +159,7 @@ final class ApiRest implements IApi
 
 
     /**
-     * @param int[] $packetIds
+     * @param string[] $packetIds
      * @return mixed
      */
     public function packetsLabelsPdf(array $packetIds, string $format = 'A7 on A4', int $offset = 0)
@@ -170,10 +170,10 @@ final class ApiRest implements IApi
 
     /**
      *
-     * @param int $packetId
+     * @param string $packetId
      * @return string
      */
-    public function packetCourierNumber(int $packetId): string
+    public function packetCourierNumber(string $packetId): string
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }

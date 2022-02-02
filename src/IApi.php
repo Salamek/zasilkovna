@@ -33,27 +33,27 @@ interface IApi
     /**
      * @return mixed
      */
-    public function createShipment(int $packetId, string $customBarcode);
+    public function createShipment(string $packetId, string $customBarcode);
 
     /**
      * @return mixed
      */
-    public function packetStatus(int $packetId);
+    public function packetStatus(string $packetId);
 
     /**
      * @return mixed
      */
-    public function packetTracking(int $packetId);
+    public function packetTracking(string $packetId);
 
     /**
      * @return mixed
      */
-    public function packetGetStoredUntil(int $packetId);
+    public function packetGetStoredUntil(string $packetId);
 
     /**
      * @return mixed
      */
-    public function packetSetStoredUntil(int $packetId, DateTimeInterface $date);
+    public function packetSetStoredUntil(string $packetId, DateTimeInterface $date);
 
     /**
      * @return mixed
@@ -61,9 +61,12 @@ interface IApi
     public function barcodePng(string $barcode);
 
     /**
-     * @return mixed
+     * 
+     * @param string $packetId
+     * @param string $format
+     * @param int $offset
      */
-    public function packetLabelPdf(int $packetId, string $format, int $offset);
+    public function packetLabelPdf(string $packetId, string $format, int $offset);
 
     /**
      * @param int[] $packetIds
@@ -74,7 +77,7 @@ interface IApi
     /**
      * @return mixed
      */
-    public function packetCourierNumber(int $packetId);
+    public function packetCourierNumber(string $packetId);
 
     /**
      * @return mixed

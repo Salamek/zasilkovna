@@ -77,7 +77,7 @@ final class ApiSoap implements IApi
     /**
      * @return mixed
      */
-    public function createShipment(int $packetId, string $customBarcode)
+    public function createShipment(string $packetId, string $customBarcode)
     {
         return $this->soap->createShipment($this->apiKey, $packetId, $customBarcode);
     }
@@ -86,7 +86,7 @@ final class ApiSoap implements IApi
     /**
      * @return mixed
      */
-    public function packetStatus(int $packetId)
+    public function packetStatus(string $packetId)
     {
         return $this->soap->packetStatus($this->apiKey, $packetId);
     }
@@ -95,7 +95,7 @@ final class ApiSoap implements IApi
     /**
      * @return mixed
      */
-    public function packetTracking(int $packetId)
+    public function packetTracking(string $packetId)
     {
         return $this->soap->packetTracking($this->apiKey, $packetId);
     }
@@ -104,7 +104,7 @@ final class ApiSoap implements IApi
     /**
      * @return mixed
      */
-    public function packetGetStoredUntil(int $packetId)
+    public function packetGetStoredUntil(string $packetId)
     {
         return $this->soap->packetGetStoredUntil($this->apiKey, $packetId);
     }
@@ -113,7 +113,7 @@ final class ApiSoap implements IApi
     /**
      * @return mixed
      */
-    public function packetSetStoredUntil(int $packetId, \DateTimeInterface $date)
+    public function packetSetStoredUntil(string $packetId, \DateTimeInterface $date)
     {
         return $this->soap->packetSetStoredUntil($this->apiKey, $packetId, $date);
     }
@@ -129,7 +129,11 @@ final class ApiSoap implements IApi
 
 
     /**
-     * @return mixed
+     * 
+     * @param string $packetId
+     * @param string $format
+     * @param int $offset
+     * @return type
      */
     public function packetLabelPdf(string $packetId, string $format, int $offset)
     {
@@ -138,7 +142,7 @@ final class ApiSoap implements IApi
 
 
     /**
-     * @param int[] $packetIds
+     * @param string[] $packetIds
      * @return mixed
      */
     public function packetsLabelsPdf(array $packetIds, string $format, int $offset)
@@ -150,7 +154,7 @@ final class ApiSoap implements IApi
     /**
      * @return mixed
      */
-    public function packetCourierNumber(int $packetId)
+    public function packetCourierNumber(string $packetId)
     {
         return $this->soap->packetCourierNumber($this->apiKey, $packetId);
     }
