@@ -16,8 +16,7 @@ jobs:
 
     - name: Install composer deps
       run: |
-        composer create-project nette/code-checker temp/code-checker ^3 --no-progress
-        composer create-project nette/coding-standard temp/coding-standard ^2 --no-progress
+        composer create-project squizlabs/php_codesniffer temp/php_codesniffer --no-progress
 
         # Install app deps
         composer install --no-interaction --prefer-dist
@@ -25,8 +24,8 @@ jobs:
     # Check code checker and coding standards
     - name: Check coding standards
       run: |
-        php temp/code-checker/code-checker --short-arrays --strict-types --fix --no-progress
-        php temp/coding-standard/ecs check src --config temp/coding-standard/coding-standard-php71.yml
+        php temp/php_codesniffer/bin/phpcbf --standard=PSR12 src
+        php temp/php_codesniffer/bin/phpcs --standard=PSR12 src
 
     - name: Check PHPStan rules
       run: composer phpstan
