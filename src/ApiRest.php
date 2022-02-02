@@ -152,7 +152,7 @@ final class ApiRest implements IApi
      * @param int $offset
      * @return string
      */
-    public function packetLabelPdf(int $packetId, string $format = 'A7 on A4', int $offset = 0): string
+    public function packetLabelPdf(string $packetId, string $format = 'A7 on A4', int $offset = 0): string
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'format' => $format, 'offset' => $offset]);
     }

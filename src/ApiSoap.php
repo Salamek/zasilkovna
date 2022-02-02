@@ -131,7 +131,7 @@ final class ApiSoap implements IApi
     /**
      * @return mixed
      */
-    public function packetLabelPdf(int $packetId, string $format, int $offset)
+    public function packetLabelPdf(string $packetId, string $format, int $offset)
     {
         return $this->soap->packetLabelPdf($this->apiKey, $packetId, $format, $offset);
     }
