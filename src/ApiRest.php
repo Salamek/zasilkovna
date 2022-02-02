@@ -15,7 +15,11 @@ final class ApiRest implements IApi
 {
     private string $apiKey;
 
-
+    /**
+     * 
+     * @param string $apiKey
+     * @throws \InvalidArgumentException
+     */
     public function __construct(string $apiKey)
     {
         $apiKey = \trim($apiKey);
@@ -30,99 +34,125 @@ final class ApiRest implements IApi
 
 
     /**
-     * @return mixed
+     * 
+     * @param PacketAttributes $attributes
+     * @return iterable<mixed>
      */
-    public function packetAttributesValid(PacketAttributes $attributes)
+    public function packetAttributesValid(PacketAttributes $attributes): iterable
     {
         return $this->callApi(__FUNCTION__, $attributes);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param ClaimAttributes $attributes
+     * @return iterable<mixed>
      */
-    public function packetClaimAttributesValid(ClaimAttributes $attributes)
+    public function packetClaimAttributesValid(ClaimAttributes $attributes): iterable
     {
         return $this->callApi(__FUNCTION__, $attributes);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param PacketAttributes $attributes
+     * @return iterable<mixed>
      */
-    public function createPacket(PacketAttributes $attributes)
+    public function createPacket(PacketAttributes $attributes): iterable
     {
         return $this->callApi(__FUNCTION__, $attributes);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param ClaimAttributes $attributes
+     * @return iterable<mixed>
      */
-    public function createPacketClaim(ClaimAttributes $attributes)
+    public function createPacketClaim(ClaimAttributes $attributes): iterable
     {
         return $this->callApi(__FUNCTION__, $attributes);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param int $packetId
+     * @param string $customBarcode
+     * @return iterable<mixed>
      */
-    public function createShipment(int $packetId, string $customBarcode)
+    public function createShipment(int $packetId, string $customBarcode): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'customBarcode' => $customBarcode]);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param int $packetId
+     * @return iterable<mixed>
      */
-    public function packetStatus(int $packetId)
+    public function packetStatus(int $packetId): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param int $packetId
+     * @return iterable<mixed>
      */
-    public function packetTracking(int $packetId)
+    public function packetTracking(int $packetId): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param int $packetId
+     * @return iterable<mixed>
      */
-    public function packetGetStoredUntil(int $packetId)
+    public function packetGetStoredUntil(int $packetId): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param int $packetId
+     * @param \DateTimeInterface $date
+     * @return iterable<mixed>
      */
-    public function packetSetStoredUntil(int $packetId, \DateTimeInterface $date)
+    public function packetSetStoredUntil(int $packetId, \DateTimeInterface $date): iterable
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'date' => $date->format('Y-m-d H:i:s')]);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param string $barcode
+     * @return string
      */
-    public function barcodePng(string $barcode)
+    public function barcodePng(string $barcode): string
     {
         return $this->callApi(__FUNCTION__, ['barcode' => $barcode]);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param int $packetId
+     * @param string $format
+     * @param int $offset
+     * @return string
      */
-    public function packetLabelPdf(int $packetId, string $format, int $offset)
+    public function packetLabelPdf(int $packetId, string $format = 'A7 on A4', int $offset = 0): string
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'format' => $format, 'offset' => $offset]);
     }
@@ -132,16 +162,18 @@ final class ApiRest implements IApi
      * @param int[] $packetIds
      * @return mixed
      */
-    public function packetsLabelsPdf(array $packetIds, string $format, int $offset)
+    public function packetsLabelsPdf(array $packetIds, string $format = 'A7 on A4', int $offset = 0)
     {
         return $this->callApi(__FUNCTION__, ['packetIds' => $packetIds, 'format' => $format, 'offset' => $offset]);
     }
 
 
     /**
-     * @return mixed
+     * 
+     * @param int $packetId
+     * @return string
      */
-    public function packetCourierNumber(int $packetId)
+    public function packetCourierNumber(int $packetId): string
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
@@ -193,7 +225,7 @@ final class ApiRest implements IApi
 
     /**
      * @param IModel|array|mixed $object
-     * @return mixed[]|null
+     * @return mixed[]|string|null
      * @throws RestFault
      */
     private function callApi(string $method, $object)
