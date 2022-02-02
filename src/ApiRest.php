@@ -164,7 +164,16 @@ final class ApiRest implements IApi
      */
     public function packetsLabelsPdf(array $packetIds, string $format = 'A7 on A4', int $offset = 0)
     {
-        return $this->callApi(__FUNCTION__, ['packetIds' => ['id' => $packetIds], 'format' => $format, 'offset' => $offset]);
+        return $this->callApi(
+            __FUNCTION__,
+            [
+                'packetIds' => [
+                    'id' => $packetIds
+                ],
+                'format' => $format,
+                'offset' => $offset
+            ]
+        );
     }
 
 
