@@ -9,58 +9,58 @@ namespace Salamek\Zasilkovna\Model;
  */
 final class BranchStorageFile implements IBranchStorage
 {
-	/** @var mixed[][]|null */
-	private ?array $branchList = null;
+    /** @var mixed[][]|null */
+    private ?array $branchList = null;
 
-	private string $filePath;
-
-
-	public function __construct(?string $filePath = null)
-	{
-		$this->filePath = $filePath ?? sys_get_temp_dir() . '/' . md5(__CLASS__);
-		if (\is_file($this->filePath)) {
-			$this->branchList = \json_decode(file_get_contents($this->filePath), true);
-		}
-	}
+    private string $filePath;
 
 
-	/**
-	 * @return mixed[][]
-	 */
-	public function getBranchList(): array
-	{
-		if ($this->branchList === null) {
-			throw new \RuntimeException('Branch list is empty.');
-		}
-
-		return $this->branchList;
-	}
+    public function __construct(?string $filePath = null)
+    {
+        $this->filePath = $filePath ?? \sys_get_temp_dir() . '/' . md5($this::class);
+        if (\is_file($this->filePath)) {
+            $this->branchList = \json_decode(\file_get_contents($this->filePath), true);
+        }
+    }
 
 
-	public function setBranchList(array $branchList): void
-	{
-		$this->branchList = $branchList;
-		file_put_contents($this->filePath, json_encode($branchList));
-	}
+    /**
+     * @return mixed[][]
+     */
+    public function getBranchList(): array
+    {
+        if ($this->branchList === null) {
+            throw new \RuntimeException('Branch list is empty.');
+        }
+
+        return $this->branchList;
+    }
 
 
-	/**
-	 * @return mixed[]
-	 */
-	public function find(int $id): ?array
-	{
-		foreach ($this->branchList ?? [] as $item) {
-			if (((int) $item['id']) === $id) {
-				return $item;
-			}
-		}
-
-		return null;
-	}
+    public function setBranchList(array $branchList): void
+    {
+        $this->branchList = $branchList;
+        file_put_contents($this->filePath, json_encode($branchList));
+    }
 
 
-	public function isStorageValid(): bool
-	{
-		return $this->branchList !== null;
-	}
+    /**
+     * @return mixed[]
+     */
+    public function find(int $id): ?array
+    {
+        foreach ($this->branchList ?? [] as $item) {
+            if (((int) $item['id']) === $id) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+
+    public function isStorageValid(): bool
+    {
+        return $this->branchList !== null;
+    }
 }

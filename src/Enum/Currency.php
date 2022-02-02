@@ -6,15 +6,15 @@ namespace Salamek\Zasilkovna\Enum;
 
 final class Currency
 {
-	public const CZK = 'CZK';
+    public const CZK = 'CZK';
 
-	public const EUR = 'EUR';
+    public const EUR = 'EUR';
 
-	public const HUF = 'HUF';
+    public const HUF = 'HUF';
 
-	public const PLN = 'PLN';
+    public const PLN = 'PLN';
 
-	public const RON = 'RON';
+    public const RON = 'RON';
 
-	public const UAH = 'UAH';
+    public const UAH = 'UAH';
 }

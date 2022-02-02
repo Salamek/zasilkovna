@@ -4,87 +4,99 @@ declare(strict_types=1);
 
 namespace Salamek\Zasilkovna\Model;
 
-
 /**
  * @internal
  */
 final class BranchStorageSqLite implements IBranchStorage
 {
-	private \PDO $database;
+    private \PDO $database;
 
-	private string $expiration;
+    private string $expiration;
 
-	private string $tableName = 'branch';
-
-
-	public function __construct(?string $cachePath = null, string $expiration = '-24 hours')
-	{
-		$this->expiration = $expiration;
-		$this->database = new \PDO('sqlite:/' . ($cachePath ?? sys_get_temp_dir() . '/' . md5(__CLASS__) . '.sqlite'));
-		$this->database->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		$this->createTable();
-	}
+    private string $tableName = 'branch';
 
 
-	/**
-	 * @return mixed[][]
-	 */
-	public function getBranchList(): array
-	{
-		$return = [];
-		foreach ($this->database->query('SELECT `data` FROM ' . $this->tableName) as $row) {
-			$return[] = json_decode($row['data'], true);
-		}
-
-		return $return;
-	}
+    public function __construct(?string $cachePath = null, string $expiration = '-24 hours')
+    {
+        $this->expiration = $expiration;
+        $sqLiteStoragePath = ($cachePath ?? sys_get_temp_dir() . '/' . md5($this::class) . '.sqlite');
+        $this->database = new \PDO('sqlite:/' . $sqLiteStoragePath);
+        $this->database->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->createTable();
+    }
 
 
-	/**
-	 * @return mixed[]
-	 */
-	public function find(int $id): ?array
-	{
-		$statement = $this->database->prepare('SELECT `data` FROM ' . $this->tableName . ' WHERE id = ?');
-		$statement->execute([$id]);
+    /**
+     * @return mixed[][]
+     */
+    public function getBranchList(): array
+    {
+        $return = [];
+        foreach ($this->database->query('SELECT `data` FROM ' . $this->tableName) as $row) {
+            $return[] = json_decode($row['data'], true);
+        }
 
-		if ($found = $statement->fetch()) {
-			return json_decode($found['data'], true);
-		}
-
-		return null;
-	}
+        return $return;
+    }
 
 
-	/**
-	 * @param mixed[] $branchList
-	 */
-	public function setBranchList(array $branchList): void
-	{
-		$statement = $this->database->prepare('DROP TABLE ' . $this->tableName);
-		$statement->execute([]);
+    /**
+     * @return mixed[]
+     */
+    public function find(int $id): ?array
+    {
+        $statement = $this->database->prepare('SELECT `data` FROM ' . $this->tableName . ' WHERE id = ?');
+        $statement->execute([$id]);
 
-		$this->createTable();
+        if ($found = $statement->fetch()) {
+            return json_decode($found['data'], true);
+        }
 
-		$statement = $this->database->prepare('INSERT INTO ' . $this->tableName . ' (`id`, `data`, `created`) VALUES (?, ?, ?)');
-		foreach ($branchList as $item) {
-			$statement->execute([$item['id'], \json_encode($item), date('Y-m-d H:i:s')]);
-		}
-	}
-
-
-	public function isStorageValid(): bool
-	{
-		$statement = $this->database->prepare('SELECT `created` FROM ' . $this->tableName . ' ORDER BY date(`created`) DESC LIMIT 1');
-		$statement->execute();
-
-		return ($found = $statement->fetch()) && (new \DateTime($found['created'])) > (new \DateTime)->modify($this->expiration);
-	}
+        return null;
+    }
 
 
-	private function createTable(): void
-	{
-		$this->database->prepare('CREATE TABLE IF NOT EXISTS ' . $this->tableName . ' (`id` INTEGER, `data` TEXT, `created` DATETIME)')
-			->execute();
-	}
+    /**
+     * @param mixed[] $branchList
+     */
+    public function setBranchList(array $branchList): void
+    {
+        $statement = $this->database->prepare('DROP TABLE ' . $this->tableName);
+        $statement->execute([]);
+
+        $this->createTable();
+
+        $sql = sprintf('INSERT INTO %s (`id`, `data`, `created`) VALUES (?, ?, ?)', $this->tableName);
+        $statement = $this->database->prepare($sql);
+        foreach ($branchList as $item) {
+            $statement->execute([$item['id'], \json_encode($item), date('Y-m-d H:i:s')]);
+        }
+    }
+
+
+    public function isStorageValid(): bool
+    {
+        $sql = sprintf('SELECT `created` FROM %s ORDER BY date(`created`) DESC LIMIT 1', $this->tableName);
+        $statement = $this->database->prepare($sql);
+        $statement->execute();
+
+        $found = $statement->fetch();
+        if ($found) {
+            $createdDateTime = new \DateTime($found['created']);
+            $expiresDateTime = (new \DateTime())->modify($this->expiration);
+            return $createdDateTime > $expiresDateTime;
+        }
+        return false;
+    }
+
+
+    private function createTable(): void
+    {
+        $sql = sprintf(
+            'CREATE TABLE IF NOT EXISTS %s (`id` INTEGER, `data` TEXT, `created` DATETIME)',
+            $this->tableName
+        );
+        $this->database->prepare($sql)
+            ->execute();
+    }
 }
