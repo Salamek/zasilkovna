@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Salamek\Zasilkovna;
 
-
 use Salamek\Zasilkovna\Exception\ConnectException;
 use Salamek\Zasilkovna\Exception\PacketAttributesFault;
 use Salamek\Zasilkovna\Exception\RestFault;
@@ -35,7 +34,6 @@ final class ApiRest implements IApi
         $this->apiKey = $apiKey;
     }
 
-
     /**
      *
      * @param PacketAttributes $attributes
@@ -45,7 +43,6 @@ final class ApiRest implements IApi
     {
         return $this->callApi(__FUNCTION__, $attributes);
     }
-
 
     /**
      *
@@ -57,7 +54,6 @@ final class ApiRest implements IApi
         return $this->callApi(__FUNCTION__, $attributes);
     }
 
-
     /**
      *
      * @param PacketAttributes $attributes
@@ -68,7 +64,6 @@ final class ApiRest implements IApi
         return $this->callApi(__FUNCTION__, $attributes);
     }
 
-
     /**
      *
      * @param ClaimAttributes $attributes
@@ -78,7 +73,6 @@ final class ApiRest implements IApi
     {
         return $this->callApi(__FUNCTION__, $attributes);
     }
-
 
     /**
      *
@@ -91,7 +85,6 @@ final class ApiRest implements IApi
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'customBarcode' => $customBarcode]);
     }
 
-
     /**
      *
      * @param string $packetId
@@ -101,7 +94,6 @@ final class ApiRest implements IApi
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
-
 
     /**
      *
@@ -113,7 +105,6 @@ final class ApiRest implements IApi
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
-
     /**
      *
      * @param string $packetId
@@ -123,7 +114,6 @@ final class ApiRest implements IApi
     {
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
-
 
     /**
      *
@@ -136,7 +126,6 @@ final class ApiRest implements IApi
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'date' => $date->format('Y-m-d H:i:s')]);
     }
 
-
     /**
      *
      * @param string $barcode
@@ -146,7 +135,6 @@ final class ApiRest implements IApi
     {
         return $this->callApi(__FUNCTION__, ['barcode' => $barcode]);
     }
-
 
     /**
      *
@@ -160,7 +148,6 @@ final class ApiRest implements IApi
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'format' => $format, 'offset' => $offset]);
     }
 
-
     /**
      * @param string[] $packetIds
      * @return mixed
@@ -170,15 +157,14 @@ final class ApiRest implements IApi
         return $this->callApi(
             __FUNCTION__,
             [
-                'packetIds' => [
-                    'id' => $packetIds
-                ],
-                'format' => $format,
-                'offset' => $offset
-            ]
+                            'packetIds' => [
+                                'id' => $packetIds
+                            ],
+                            'format' => $format,
+                            'offset' => $offset
+                        ]
         );
     }
-
 
     /**
      *
@@ -190,7 +176,6 @@ final class ApiRest implements IApi
         return $this->callApi(__FUNCTION__, ['packetId' => $packetId]);
     }
 
-
     /**
      * @return mixed
      */
@@ -198,7 +183,6 @@ final class ApiRest implements IApi
     {
         return $this->callApi(__FUNCTION__, ['senderLabel' => $senderLabel]);
     }
-
 
     /**
      * @param mixed[] $array
@@ -208,7 +192,6 @@ final class ApiRest implements IApi
     {
         return ArrayToXml::convert($array, $root);
     }
-
 
     /**
      * @return mixed[]
@@ -220,44 +203,44 @@ final class ApiRest implements IApi
         return json_decode(json_encode($simplexml), true, 512, JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * @throws ConnectException
+     * @throws ServerException
+     */
+    private function post(string $xml): string
+    {
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => 'Content-type: text/xml',
+                'content' => $xml,
+            ],
+        ]);
 
-	/**
-	 * @throws ConnectException
-	 * @throws ServerException
-	 */
-	private function post(string $xml): string
-	{
-		$context = stream_context_create([
-			'http' => [
-				'method' => 'POST',
-				'header' => 'Content-type: text/xml',
-				'content' => $xml,
-			],
-		]);
+        $response = @file_get_contents('https://www.zasilkovna.cz/api/rest', false, $context);
 
-		$response = @file_get_contents('https://www.zasilkovna.cz/api/rest', false, $context);
+        // Response 200
+        // Packeta returns 200 even on 404 error for example
+        if ($response) {
+            return $response;
+        }
 
-		// Response 200
-		// Packeta returns 200 even on 404 error for example
-		if ($response) {
-			return $response;
-		}
+        // Can't establish connection
+        // For example DNS record not found
+        // @phpstan-ignore-next-line
+        if (!isset($http_response_header)) {
+            throw new \Exception('Can\'t connect to packeta API service.');
+        }
 
-		// Can't establish connection
-		// For example DNS record not found
-		if (!isset($http_response_header)) {
-			throw new \Exception('Can\'t connect to packeta API service.');
-		}
+        // Connection timeout
+        if (empty($http_response_header)) {
+            throw new ConnectException('Can\'t connect to packeta API service.');
+        }
 
-		// Connection timeout
-		if (empty($http_response_header)) {
-			throw new ConnectException('Can\'t connect to packeta API service.');
-		}
-
-		// Server error (5XX)
-		preg_match( "#HTTP/[0-9\.]+\s+([0-9]+)#", $http_response_header[0], $out);
-		throw new ServerException('Unsuccessful attempt to retrieve data from packeta API.', intval($out[1]));
-	}
+        // Server error (5XX)
+        preg_match("#HTTP/[0-9\.]+\s+([0-9]+)#", $http_response_header[0], $out);
+        throw new ServerException('Unsuccessful attempt to retrieve data from packeta API.', intval($out[1]));
+    }
 
     /**
      * @param IModel|array|mixed $object
@@ -284,15 +267,14 @@ final class ApiRest implements IApi
             throw new \InvalidArgumentException($message);
         }
 
-                $xmlData = $this->array2xml($method, $xmlArray);
-                $xmlResponse = $this->post($xmlData);
+        $xmlData = $this->array2xml($method, $xmlArray);
+        $xmlResponse = $this->post($xmlData);
 
         $result = $this->xml2Array($xmlResponse);
         $this->processResult($result);
 
         return $result['result'] ?? null;
     }
-
 
     /**
      * @param mixed[] $result
@@ -305,7 +287,7 @@ final class ApiRest implements IApi
                 throw new PacketAttributesFault($result['detail']['attributes']['fault']);
             }
 
-                        $resultFaultsInfo = [$result['fault'] . ': ' . ($result['string'] ?? 'Unknown error')];
+            $resultFaultsInfo = [$result['fault'] . ': ' . ($result['string'] ?? 'Unknown error')];
 
             if (isset($result['detail']) && $result['detail']) {
                 $resultFaultsInfo[] = PHP_EOL . 'Details: ' . json_encode($result['detail']);
