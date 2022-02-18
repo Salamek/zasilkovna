@@ -17,7 +17,7 @@ $ composer require salamek/zasilkovna
 or if you want master branch code:
 
 ```sh
-$ composer require salamek/zasilkovna:dev-master
+$ composer require salamek/zasilkovna
 ```
 
 ## Documentation
