@@ -10,7 +10,7 @@ final class PacketAttributesFault extends \Exception
     private array $fails = [];
 
 
-    public function __construct(mixed $fails)
+    public function __construct($fails)
     {
         // Normalize schema
         if (isset($fails['name'])) {
