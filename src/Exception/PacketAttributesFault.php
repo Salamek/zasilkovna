@@ -9,7 +9,9 @@ final class PacketAttributesFault extends \Exception
     /** @var mixed[] (name => fail) */
     private array $fails = [];
 
-
+    /**
+     * @param mixed[] $fails
+     */
     public function __construct(array $fails)
     {
         // Normalize schema
