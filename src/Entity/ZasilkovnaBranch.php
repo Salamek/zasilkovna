@@ -87,8 +87,8 @@ final class ZasilkovnaBranch implements IBranch
         $this->claimAssistant = $data['claimAssistant'] === '1';
         $this->packetConsignment = $data['packetConsignment'] === '1';
         $this->maxWeight = (int) $data['maxWeight'];
-        $this->region = $data['region'];
-        $this->district = Tool::convertToString($data['district']);
+        $this->region = $data['region'] ?? "";
+        $this->district = Tool::convertToString($data['district'] ?? null);
         $this->labelRouting = Tool::convertToString($data['labelRouting']);
         $this->labelName = Tool::convertToString($data['labelName']);
         $this->openingHours = new BranchOpeningHours((array) ($data['openingHours'] ?? []));
