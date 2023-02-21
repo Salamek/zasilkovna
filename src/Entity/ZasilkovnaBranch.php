@@ -76,9 +76,9 @@ final class ZasilkovnaBranch implements IBranch
         $this->zip = $data['zip'];
         $this->country = $data['country'];
         $this->currency = $data['currency'];
-        $this->directions = $data['directions'] ?? null;
-        $this->directionsCar = $data['directionsCar'] ?? null;
-        $this->directionsPublic = $data['directionsPublic'] ?? null;
+        $this->directions = Tools::convertToString($data['directions'] ?? null);
+        $this->directionsCar = Tools::convertToString($data['directionsCar'] ?? null);
+        $this->directionsPublic = Tools::convertToString($data['directionsPublic'] ?? null);
         $this->wheelchairAccessible = $data['wheelchairAccessible'] !== 'no';
         $this->latitude = (float) $data['latitude'];
         $this->longitude = (float) $data['longitude'];

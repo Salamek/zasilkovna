@@ -26,7 +26,7 @@ final class Branch
             throw new \RuntimeException('API key can not be empty.');
         }
         $this->branchStorage = $branchStorage ?? new BranchStorageFile();
-        $this->jsonEndpoint = 'https://www.zasilkovna.cz/api/v3/' . $apiKey . '/branch.json';
+        $this->jsonEndpoint = 'https://www.zasilkovna.cz/api/v4/' . $apiKey . '/branch.json';
     }
 
 
