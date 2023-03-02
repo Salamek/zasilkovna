@@ -11,7 +11,7 @@ class Tool
      * @param mixed $input
      * @return string
      */
-    public static function convertToString(mixed $input): string
+    public static function convertToString(/*mixed */$input): string
     {
         if (\is_array($input)) {
             return \implode(', ', $input);
