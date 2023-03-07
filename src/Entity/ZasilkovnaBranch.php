@@ -12,8 +12,6 @@ final class ZasilkovnaBranch implements IBranch
 
     private string $name;
 
-    private string $nameStreet;
-
     private string $place;
 
     private string $street;
@@ -26,6 +24,10 @@ final class ZasilkovnaBranch implements IBranch
 
     private string $currency;
 
+    private BranchStatus $status;
+
+    private bool $displayFrontend;
+
     private ?string $directions;
 
     private ?string $directionsCar;
@@ -33,6 +35,8 @@ final class ZasilkovnaBranch implements IBranch
     private ?string $directionsPublic;
 
     private bool $wheelchairAccessible;
+
+    private bool $creditCardPayment;
 
     private float $latitude;
 
@@ -69,17 +73,19 @@ final class ZasilkovnaBranch implements IBranch
     {
         $this->id = (int) $data['id'];
         $this->name = $data['name'];
-        $this->nameStreet = $data['nameStreet'];
         $this->place = $data['place'];
         $this->street = $data['street'];
         $this->city = $data['city'];
         $this->zip = $data['zip'];
         $this->country = $data['country'];
         $this->currency = $data['currency'];
+        $this->status = new BranchStatus((array) ($data['status'] ?? []));
+        $this->displayFrontend = $data['displayFrontend'] === '1';
         $this->directions = Tool::convertToString($data['directions'] ?? null);
         $this->directionsCar = Tool::convertToString($data['directionsCar'] ?? null);
         $this->directionsPublic = Tool::convertToString($data['directionsPublic'] ?? null);
         $this->wheelchairAccessible = $data['wheelchairAccessible'] !== 'no';
+        $this->creditCardPayment = $data['creditCardPayment'] !== 'no';
         $this->latitude = (float) $data['latitude'];
         $this->longitude = (float) $data['longitude'];
         $this->url = $data['url'];
@@ -115,7 +121,8 @@ final class ZasilkovnaBranch implements IBranch
 
     public function getNameStreet(): string
     {
-        return $this->nameStreet;
+        trigger_error('Method ' . __METHOD__ . ' is deprecated, use getName() instead!', E_USER_DEPRECATED);
+        return $this->getName();
     }
 
 
@@ -176,6 +183,11 @@ final class ZasilkovnaBranch implements IBranch
     public function isWheelchairAccessible(): bool
     {
         return $this->wheelchairAccessible;
+    }
+
+    public function isCreditCardPayment(): bool
+    {
+        return $this->creditCardPayment;
     }
 
 
@@ -275,5 +287,15 @@ final class ZasilkovnaBranch implements IBranch
     public function getOpeningHours(): BranchOpeningHours
     {
         return $this->openingHours;
+    }
+
+    public function getStatus(): BranchStatus
+    {
+        return $this->status;
+    }
+
+    public function isDisplayFrontend(): bool
+    {
+        return $this->displayFrontend;
     }
 }
