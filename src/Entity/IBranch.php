@@ -59,6 +59,9 @@ interface IBranch
 
     public function getLabelName(): string;
 
+    /**
+     * @return BranchPhoto[]
+     */
     public function getPhotos(): array;
 
     public function getOpeningHours(): BranchOpeningHours;
