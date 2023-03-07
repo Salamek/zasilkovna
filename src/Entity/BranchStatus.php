@@ -11,7 +11,7 @@ final class BranchStatus
     private string $description;
 
     /**
-     * @param array $status
+     * @param string[] $status
      */
     public function __construct(array $status)
     {
