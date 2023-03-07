@@ -25,11 +25,11 @@ interface IBranch
 
     public function getCurrency(): string;
 
-    public function getDirections(): string;
+    public function getDirections(): ?string;
 
-    public function getDirectionsCar(): string;
+    public function getDirectionsCar(): ?string;
 
-    public function getDirectionsPublic(): string;
+    public function getDirectionsPublic(): ?string;
 
     public function isWheelchairAccessible(): bool;
 
