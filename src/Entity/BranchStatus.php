@@ -15,7 +15,7 @@ final class BranchStatus
      */
     public function __construct(array $status)
     {
-        $this->statusId = (int) $status['statusId'] ?? -1;
+        $this->statusId = (int)($status['statusId'] ?? -1);
         $this->description = $status['description'] ?? '';
     }
 
