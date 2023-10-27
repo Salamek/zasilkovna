@@ -75,11 +75,12 @@ final class ApiSoap implements IApi
 
 
     /**
+     * @param string[] $packetIds
      * @return mixed
      */
-    public function createShipment(string $packetId, string $customBarcode)
+    public function createShipment(array $packetIds, string $customBarcode)
     {
-        return $this->soap->createShipment($this->apiKey, $packetId, $customBarcode);
+        return $this->soap->createShipment($this->apiKey, $packetIds, $customBarcode);
     }
 
 
