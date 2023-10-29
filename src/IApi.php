@@ -31,9 +31,10 @@ interface IApi
     public function createPacketClaim(ClaimAttributes $attributes);
 
     /**
+     * @param string[] $packetIds
      * @return mixed
      */
-    public function createShipment(string $packetId, string $customBarcode);
+    public function createShipment(array $packetIds, string $customBarcode);
 
     /**
      * @return mixed

@@ -76,13 +76,26 @@ final class ApiRest implements IApi
 
     /**
      *
-     * @param string $packetId
-     * @param string $customBarcode
+     * @param string[] $packetIds
+     * @param ?string $customBarcode
      * @return iterable<mixed>
      */
-    public function createShipment(string $packetId, string $customBarcode): iterable
+    public function createShipment(array $packetIds, ?string $customBarcode = null): iterable
     {
-        return $this->callApi(__FUNCTION__, ['packetId' => $packetId, 'customBarcode' => $customBarcode]);
+        $variables = [
+            'packetIds' => [
+                'id' => $packetIds
+            ],
+        ];
+
+        if ($customBarcode !== null) {
+            $variables['customBarcode'] = $customBarcode;
+        }
+
+        return $this->callApi(
+            __FUNCTION__,
+            $variables,
+        );
     }
 
     /**
