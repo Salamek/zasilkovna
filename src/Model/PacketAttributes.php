@@ -44,7 +44,7 @@ final class PacketAttributes implements IModel
 
     private ?string $zip;
 
-    private ?int $carrierPickupPoint;
+    private ?string $carrierPickupPoint;
 
     private ?string $carrierService;
 
@@ -72,7 +72,7 @@ final class PacketAttributes implements IModel
         ?string $houseNumber = null,
         ?string $city = null,
         ?string $zip = null,
-        ?int $carrierPickupPoint = null,
+        ?string $carrierPickupPoint = null,
         ?string $carrierService = null,
         ?DispatchOrder $dispatchOrder = null,
         ?string $customerBarcode = null
@@ -325,13 +325,13 @@ final class PacketAttributes implements IModel
     }
 
 
-    public function getCarrierPickupPoint(): ?int
+    public function getCarrierPickupPoint(): ?string
     {
         return $this->carrierPickupPoint;
     }
 
 
-    public function setCarrierPickupPoint(?int $carrierPickupPoint): void
+    public function setCarrierPickupPoint(?string $carrierPickupPoint): void
     {
         $this->carrierPickupPoint = $carrierPickupPoint;
     }
