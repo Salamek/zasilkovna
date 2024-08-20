@@ -10,4 +10,4 @@ REGEXPS:
 VERSION_FILES:
     '.version.yml': 'version'
 
-_VERSION: '3.4.0'
+_VERSION: '3.4.1'
