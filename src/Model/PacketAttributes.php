@@ -52,6 +52,8 @@ final class PacketAttributes implements IModel
 
     private ?string $customerBarcode;
 
+    private ?Size $size;
+
 
     public function __construct(
         string $number,
@@ -75,7 +77,8 @@ final class PacketAttributes implements IModel
         ?string $carrierPickupPoint = null,
         ?string $carrierService = null,
         ?DispatchOrder $dispatchOrder = null,
-        ?string $customerBarcode = null
+        ?string $customerBarcode = null,
+        ?Size $size = null
     ) {
         $this->setNumber($number);
         $this->setName($name);
@@ -99,6 +102,7 @@ final class PacketAttributes implements IModel
         $this->setCarrierService($carrierService);
         $this->setDispatchOrder($dispatchOrder);
         $this->setCustomerBarcode($customerBarcode);
+        $this->setSize($size);
     }
 
 
@@ -370,6 +374,16 @@ final class PacketAttributes implements IModel
     public function setCustomerBarcode(?string $customerBarcode): void
     {
         $this->customerBarcode = $customerBarcode;
+    }
+
+    public function getSize() : ?Size
+    {
+        return $this->size;
+    }
+
+    public function setSize(?Size $size) : void
+    {
+        $this->size = $size;
     }
 
 
