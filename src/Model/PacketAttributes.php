@@ -376,12 +376,12 @@ final class PacketAttributes implements IModel
         $this->customerBarcode = $customerBarcode;
     }
 
-    public function getSize() : ?Size
+    public function getSize(): ?Size
     {
         return $this->size;
     }
 
-    public function setSize(?Size $size) : void
+    public function setSize(?Size $size): void
     {
         $this->size = $size;
     }

@@ -20,32 +20,32 @@ final class Size implements IModel
         $this->setHeight($height);
     }
 
-    public function getLength() : int
+    public function getLength(): int
     {
         return $this->length;
     }
 
-    public function setLength(int $length) : void
+    public function setLength(int $length): void
     {
         $this->length = $length;
     }
 
-    public function getWidth() : int
+    public function getWidth(): int
     {
         return $this->width;
     }
 
-    public function setWidth(int $width) : void
+    public function setWidth(int $width): void
     {
         $this->width = $width;
     }
 
-    public function getHeight() : int
+    public function getHeight(): int
     {
         return $this->height;
     }
 
-    public function setHeight(int $height) : void
+    public function setHeight(int $height): void
     {
         $this->height = $height;
     }
