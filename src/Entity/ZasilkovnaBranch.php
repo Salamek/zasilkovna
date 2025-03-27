@@ -28,11 +28,11 @@ final class ZasilkovnaBranch implements IBranch
 
     private bool $displayFrontend;
 
-    private ?string $directions;
+    private string $directions;
 
-    private ?string $directionsCar;
+    private string $directionsCar;
 
-    private ?string $directionsPublic;
+    private string $directionsPublic;
 
     private bool $wheelchairAccessible;
 
@@ -162,19 +162,19 @@ final class ZasilkovnaBranch implements IBranch
     }
 
 
-    public function getDirections(): ?string
+    public function getDirections(): string
     {
         return $this->directions;
     }
 
 
-    public function getDirectionsCar(): ?string
+    public function getDirectionsCar(): string
     {
         return $this->directionsCar;
     }
 
 
-    public function getDirectionsPublic(): ?string
+    public function getDirectionsPublic(): string
     {
         return $this->directionsPublic;
     }
