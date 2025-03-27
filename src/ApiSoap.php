@@ -10,7 +10,7 @@ use Salamek\Zasilkovna\Model\PacketAttributes;
 
 final class ApiSoap implements IApi
 {
-    private ?\SoapClient $soap;
+    private \SoapClient $soap;
 
     private string $apiKey;
 
