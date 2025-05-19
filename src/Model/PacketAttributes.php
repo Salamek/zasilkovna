@@ -113,13 +113,13 @@ final class PacketAttributes implements IModel
         return $this->note;
     }
 
-  
+
     public function setNote(?string $note): void
     {
         $this->note = $note;
     }
 
-  
+
     public function getNumber(): string
     {
         return $this->number;
