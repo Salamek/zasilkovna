@@ -72,7 +72,7 @@ final class PacketAttributes implements IModel
         ?float $cod = null,
         ?float $weight = null,
         ?string $eshop = null,
-        bool $adultContent = null,
+        ?bool $adultContent = null,
         ?string $street = null,
         ?string $houseNumber = null,
         ?string $city = null,

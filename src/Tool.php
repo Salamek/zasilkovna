@@ -53,6 +53,10 @@ class Tool
         return $phone;
     }
 
+    /**
+     * @param array<string, mixed> $vars
+     * @return array<string, string|int>
+     */
     public static function resolveNestedVars(array $vars): array
     {
         $ret = [];
