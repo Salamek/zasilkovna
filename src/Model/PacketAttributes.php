@@ -54,6 +54,7 @@ final class PacketAttributes implements IModel
 
     private ?Size $size;
 
+    private ?string $note = null;
 
     public function __construct(
         string $number,
@@ -78,7 +79,8 @@ final class PacketAttributes implements IModel
         ?string $carrierService = null,
         ?DispatchOrder $dispatchOrder = null,
         ?string $customerBarcode = null,
-        ?Size $size = null
+        ?Size $size = null,
+        ?string $note = null
     ) {
         $this->setNumber($number);
         $this->setName($name);
@@ -103,8 +105,18 @@ final class PacketAttributes implements IModel
         $this->setDispatchOrder($dispatchOrder);
         $this->setCustomerBarcode($customerBarcode);
         $this->setSize($size);
+        $this->setNote($note);
     }
 
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(string $note): void
+    {
+        $this->note = $note;
+    }
 
     public function getNumber(): string
     {
@@ -392,6 +404,31 @@ final class PacketAttributes implements IModel
      */
     public function toArray(): array
     {
-        return get_object_vars($this);
+        return [
+            'number' => $this->number,
+            'name' => $this->name,
+            'surname' => $this->surname,
+            'value' => $this->value,
+            'addressId' => $this->addressId,
+            'id' => $this->id,
+            'company' => $this->company,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'currency' => $this->currency,
+            'cod' => $this->cod,
+            'weight' => $this->weight,
+            'eshop' => $this->eshop,
+            'adultContent' => $this->adultContent,
+            'street' => $this->street,
+            'houseNumber' => $this->houseNumber,
+            'city' => $this->city,
+            'zip' => $this->zip,
+            'carrierPickupPoint' => $this->carrierPickupPoint,
+            'carrierService' => $this->carrierService,
+            'dispatchOrder' => $this->dispatchOrder?->toArray(),
+            'customerBarcode' => $this->customerBarcode,
+            'size' => $this->size?->toArray(),
+            'note' => $this->note, // přidání poznámky
+        ];
     }
 }
