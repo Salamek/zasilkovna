@@ -53,7 +53,8 @@ class Tool
         return $phone;
     }
 
-    public static function resolveNestedVars(array $vars): array {
+    public static function resolveNestedVars(array $vars): array
+    {
         $ret = [];
         foreach ($vars as $key => $value) {
             if (is_object($value) === false) {

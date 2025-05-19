@@ -404,7 +404,7 @@ final class PacketAttributes implements IModel
     /**
      * @return mixed[]
      */
-    
+
     public function toArray(): array
     {
         return Tool::resolveNestedVars(get_object_vars($this));
