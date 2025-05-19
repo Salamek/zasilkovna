@@ -56,8 +56,6 @@ final class PacketAttributes implements IModel
 
     private ?string $note = null;
 
-
-
     public function __construct(
         string $number,
         string $name,
@@ -115,11 +113,13 @@ final class PacketAttributes implements IModel
         return $this->note;
     }
 
+  
     public function setNote(?string $note): void
     {
         $this->note = $note;
     }
 
+  
     public function getNumber(): string
     {
         return $this->number;
@@ -404,7 +404,6 @@ final class PacketAttributes implements IModel
     /**
      * @return mixed[]
      */
-
     public function toArray(): array
     {
         return Tool::resolveNestedVars(get_object_vars($this));
