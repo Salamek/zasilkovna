@@ -54,6 +54,9 @@ final class PacketAttributes implements IModel
 
     private ?Size $size;
 
+    private ?string $note = null;
+
+
 
     public function __construct(
         string $number,
@@ -69,7 +72,7 @@ final class PacketAttributes implements IModel
         ?float $cod = null,
         ?float $weight = null,
         ?string $eshop = null,
-        ?bool $adultContent = null,
+        bool $adultContent = null,
         ?string $street = null,
         ?string $houseNumber = null,
         ?string $city = null,
@@ -78,7 +81,8 @@ final class PacketAttributes implements IModel
         ?string $carrierService = null,
         ?DispatchOrder $dispatchOrder = null,
         ?string $customerBarcode = null,
-        ?Size $size = null
+        ?Size $size = null,
+        ?string $note = null
     ) {
         $this->setNumber($number);
         $this->setName($name);
@@ -103,8 +107,18 @@ final class PacketAttributes implements IModel
         $this->setDispatchOrder($dispatchOrder);
         $this->setCustomerBarcode($customerBarcode);
         $this->setSize($size);
+        $this->setNote($note);
     }
 
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): void
+    {
+        $this->note = $note;
+    }
 
     public function getNumber(): string
     {
@@ -198,7 +212,7 @@ final class PacketAttributes implements IModel
 
     public function setEmail(?string $email): void
     {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $message = sprintf('Customer e-mail "%s" is not valid.', $email);
             throw new \InvalidArgumentException($message);
         }
@@ -390,8 +404,9 @@ final class PacketAttributes implements IModel
     /**
      * @return mixed[]
      */
+    
     public function toArray(): array
     {
-        return get_object_vars($this);
+        return Tool::resolveNestedVars(get_object_vars($this));
     }
 }
