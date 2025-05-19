@@ -113,11 +113,13 @@ final class PacketAttributes implements IModel
         return $this->note;
     }
 
-    public function setNote(string $note): void
+  
+    public function setNote(?string $note): void
     {
         $this->note = $note;
     }
 
+  
     public function getNumber(): string
     {
         return $this->number;
@@ -210,7 +212,7 @@ final class PacketAttributes implements IModel
 
     public function setEmail(?string $email): void
     {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $message = sprintf('Customer e-mail "%s" is not valid.', $email);
             throw new \InvalidArgumentException($message);
         }
@@ -404,31 +406,6 @@ final class PacketAttributes implements IModel
      */
     public function toArray(): array
     {
-        return [
-            'number' => $this->number,
-            'name' => $this->name,
-            'surname' => $this->surname,
-            'value' => $this->value,
-            'addressId' => $this->addressId,
-            'id' => $this->id,
-            'company' => $this->company,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'currency' => $this->currency,
-            'cod' => $this->cod,
-            'weight' => $this->weight,
-            'eshop' => $this->eshop,
-            'adultContent' => $this->adultContent,
-            'street' => $this->street,
-            'houseNumber' => $this->houseNumber,
-            'city' => $this->city,
-            'zip' => $this->zip,
-            'carrierPickupPoint' => $this->carrierPickupPoint,
-            'carrierService' => $this->carrierService,
-            'dispatchOrder' => $this->dispatchOrder?->toArray(),
-            'customerBarcode' => $this->customerBarcode,
-            'size' => $this->size?->toArray(),
-            'note' => $this->note, // přidání poznámky
-        ];
+        return Tool::resolveNestedVars(get_object_vars($this));
     }
 }

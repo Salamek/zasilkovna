@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Salamek\Zasilkovna;
 
+use Salamek\Zasilkovna\Model\IModel;
+
 class Tool
 {
     /**
@@ -49,5 +51,29 @@ class Tool
         }
 
         return $phone;
+    }
+
+    /**
+     * @param array<string, mixed> $vars
+     * @return array<string, string|int>
+     */
+    public static function resolveNestedVars(array $vars): array
+    {
+        $ret = [];
+        foreach ($vars as $key => $value) {
+            if (is_object($value) === false) {
+                $ret[$key] = $value;
+                continue;
+            }
+
+            if ($value instanceof IModel) {
+                $ret[$key] = $value->toArray();
+                continue;
+            }
+
+            throw new \InvalidArgumentException(sprintf('Property %s has unsupported type of value.', $key));
+        }
+
+        return $ret;
     }
 }
