@@ -29,8 +29,8 @@ See http://www.zasilkovna.cz/popis-api/ for more info
 ```php
 require "vendor/autoload.php";
 
-$api = new Salamek\Zasilkovna\ApiRest($apiPassword, $apiKey);
-// OR Soap implementation $api = new Salamek\Zasilkovna\ApiSoap($apiPassword, $apiKey);
+$api = new Salamek\Zasilkovna\ApiRest($apiKey);
+// OR Soap implementation $api = new Salamek\Zasilkovna\ApiSoap($apiKey);
 $branch = new Branch($apiKey, new BranchStorageSqLite()); // There are multiple implementations of IBranchStorage BranchStorageSqLite using SQLite, BranchStorageFile using file in /tmp and BranchStorageMemory using simple variable (SLOW), You can implement your own by implementing IBranchStorage interface
 $label = new Label($api, $branch);
 
